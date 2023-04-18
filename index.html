@@ -4,16 +4,36 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="./styles.css">
-    <title>ColoRandom</title>
+    <title>Rock, Paper, Scissors</title>
   </head>
   <body>
-    <section class="human-scoreboard"></section>
+    <section class="human-scoreboard">
+      <div class="player-container">
+        <section class="player-visual">
+          <div class="player-icon">👤</div>
+          <div class="player-name">Human</div>
+        </section>
+        <section class="player-score">
+          Wins:
+        </section>
+      </div>
+    </section>
     <main>
-        <section class="choose-game-view"></section>
-        <section class="choose-fighter-view hidden"></section>
-        <section class="result-view hidden"></section>
+      <h1>Rock, Paper, Scissors</h1>
+      <section class="choose-game-view"></section>
+      <section class="choose-fighter-view hidden"></section>
+      <section class="result-view hidden"></section>
     </main>
-    <section class="computer-scoreboard"></section>
+    <section class="computer-scoreboard">
+      <div class="player-container">
+        <section class="player-visual">
+          <div class="player-icon">&#x1F4BB;</div>
+          <div class="player-name">Computer</div>
+        </section>
+        <section class="player-score">
+          Wins:
+        </section>
+    </section>
     <script type="text/javascript" src="main.js"></script>
   </body>
 </html>
