@@ -1,0 +1,21 @@
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+}
+
+/* landing page */
+.human-scoreboard, .computer-scoreboard {
+  background-color: #3C3F68;
+  height: 100%;
+  width: 15%;
+}
+
+main {
+  background-color: #201E50;
+  height: 100%;
+  width: 70%;
+}
