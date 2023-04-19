@@ -100,13 +100,20 @@ h1 {
 } 
 
 .game-card:hover {
-  background-color: rgba(255,255,255,0.7);
-  color: black;
   font-weight: 500;
   transition-duration: 0.4s;
   cursor: pointer;
   transform: scale(1.1);
 }
+
+.classic-container:hover {
+  background-color: rgba(0,200,0,0.2);
+}
+
+.difficult-container:hover {
+  background-color: rgba(200,0,0,0.2);
+}
+
 
 h2 {
   font-size: 25px;
