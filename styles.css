@@ -4,15 +4,86 @@
 
 body {
   height: 100vh;
+  width: 100%;
   margin: 0px;
+  display: flex;
 }
 
 /* landing page */
+.middle {
+  width: 70%;
+  background-color: #201E50;
+}
 
-/* landing page form */
+.game-view {
+  height: 100vh;
+  margin: 0px;
+}
+
+.headings {
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  color: white;
+  font-size: 60px;
+  margin-bottom: 0;
+  
+}
+
+h2 {
+  font-size: 25px;
+  margin-top: 20px;
+  color: white;  
+}
+
+/* landing page sides */
+
+.human-scoreboard, .computer-scoreboard {
+  background-color: #3C3F68;
+  height: 100%;
+  width: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.player-container {
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 200px;
+}
+
+.player-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+.player-score {
+  color: white;
+  font-size: 20px
+}
+
+.player-icon {
+  font-size: 70px;
+}
+
+.player-name {
+  font-size: 25px;
+  color: white;
+}
+
+/* user form */
 .user-input-view {
-  z-index: 2;
-  position: absolute;
   margin-top: 140px;
   height:60%;
   width: 100%;
@@ -106,84 +177,22 @@ form {
   cursor: pointer;
 }
 
-/* landing page sides */
-
-.human-scoreboard, .computer-scoreboard {
-  background-color: #3C3F68;
+.game-choice-view {
   height: 100%;
-  width: 15%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.player-container {
-  margin-top: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  height: 200px;
-}
-
-.player-visual {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-}
-
-.player-score {
-  color: white;
-  font-size: 20px
-}
-
-.player-icon {
-  font-size: 70px;
-}
-
-.player-name {
-  font-size: 25px;
-  color: white;
-}
-/* landing page middle */ 
-
-.game-view {
-  height: 100vh;
-  margin: 0px;
-  display: flex;
-}
-
-.game-middle {
-  background-color: #201E50;
-  height: 100%;
-  width: 70%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-h1 {
-  color: white;
-  font-size: 60px;
-  margin-bottom: 0;
-}
+
 
 /* game choice */
-
-.choose-game-view {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  height: 80%;
-}
 
 .game-choice-container {
   display: flex;
   flex-direction: column;
   width: 60%;
-  height: 80%;
+  height: 60%;
   align-items: center;
   justify-content: space-evenly;
 }
@@ -214,13 +223,6 @@ h1 {
 
 .difficult-container:hover {
   background-color: rgba(200,0,0,0.2);
-}
-
-
-h2 {
-  font-size: 25px;
-  margin-top: 20px;
-  color: white;
 }
 
 .game-title {

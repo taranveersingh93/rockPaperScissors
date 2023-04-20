@@ -7,11 +7,14 @@ var playerIcon = document.querySelector(".player-icon");
 var playerName = document.querySelector(".player-name");
 var playerScore = document.querySelector(".player-score");
 var userInputView = document.querySelector(".user-input-view");
-var gameView = document.querySelector(".game-view");
+var gameChoiceView = document.querySelector(".game-choice-view");
+var chooseFighterView = document.querySelector(".choose-fighter-view");
 var gameChoiceTitle = document.querySelector(".game-choice-title");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
 var classicContainer = document.querySelector(".classic-container");
-var difficultContainer = document.querySelector(".difficultContainer");
+var difficultContainer = document.querySelector(".difficult-container");
+var domSubHeading = document.querySelector("h2");
+
 
 //Global variables
 var computerPlayer = {
@@ -21,29 +24,54 @@ var computerPlayer = {
 };
 var humanPlayer = {};
 var gameLogic = {};
+var subHeading;
+var humanChoice;
+var fighters = [];
+
 
 // event listeners
 userID.addEventListener("keyup", allowSubmit);
 formSubmitBtn.addEventListener("click", fetchUserData);
 classicContainer.addEventListener("click", setClassicLogic);
-//difficultContainer.addEventListener("click", setDifficultLogic);
+difficultContainer.addEventListener("click", setDifficultLogic);
 
 // orchestrating functions
 function fetchUserData() {
   humanPlayer = createPlayer(humanPlayer);
   renderPlayer(humanPlayer, playerIcon, playerName, playerScore);
-  toggleView([userInputView], [gameChoiceTitle, gameChoiceContainer]);
+  toggleView([userInputView], [gameChoiceView]);
+  subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, subHeading);
 }
 
 function setClassicLogic() {
   gameLogic = createClassicGame(gameLogic);
+  fighters = setFighters();
+  console.log(fighters);
+  toggleView([gameChoiceView], [chooseFighterView])
+  subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, subHeading);
 }
 
 function setDifficultLogic() {
   gameLogic = createDifficultGame(gameLogic);
+  fighters = setFighters();
+  console.log(fighters);
+  toggleView([gameChoiceView], [chooseFighterView])
+  changeSubHeading();
+  renderSubHeading(domSubHeading, subHeading);
 }
 
 // Data model functions 
+function changeSubHeading() {
+  if (!userInputView.classList.contains("hidden")) {
+    return "Enter your details";
+  } else if (!gameChoiceView.classList.contains("hidden")) {
+    return "Select the game type";
+  } else if (!chooseFighterView.classList.contains("hidden")) {
+    return "Choose your fighter";
+  }
+}
 
 function getRandomIndex(array) {
   return Math.floor(Math.random() * array.length);
@@ -92,6 +120,10 @@ function createDifficultGame(logicObject) {
   return logicObject;
 }
 
+function setFighters() {
+  return Object.keys(gameLogic);
+}
+
 function addToWins(playerObject) {
   var proxyPlayer = {...playerObject};
   proxyPlayer.wins++;
@@ -99,9 +131,8 @@ function addToWins(playerObject) {
   return playerObject
 }
 
-function compChoose(logicObject) {
-  var choiceArr = Object.keys(logicObject);
-  return choiceArr[getRandomIndex(choiceArr)];
+function compChoose(logicObject, fighters) {
+  return fighters[getRandomIndex(fighters)];
 }
 
 function checkWinner(playerChoice, computerChoice, logicObject) {
@@ -146,6 +177,9 @@ function checkResult(yourChoice, logicObject) {
 
 
 //DOM functions
+function renderSubHeading(dom, variable) {
+  dom.innerText = variable;
+}
 
 function renderPlayer(playerObject, domIcon, domName, domScore) {
   domIcon.innerText = playerObject.avatar;
@@ -165,11 +199,8 @@ function toggleView(fromViews, toViews) {
   for (var i = 0; i < fromViews.length; i++) {
     hideDomElement(fromViews[i]);
   }
-
   for (var i = 0; i < toViews.length; i++) {
     showDomElement(toViews[i]);
   }
 }
-humanPlayer = createPlayer(humanPlayer);
-gameLogic = createDifficultGame(gameLogic);
-console.log(checkResult("paper", gameLogic));
+
