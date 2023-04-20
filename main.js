@@ -24,7 +24,10 @@ var computerPlayer = {
 };
 var humanPlayer = {};
 var gameLogic = {};
-var subHeading = "Enter your details"
+var subHeading;
+var humanChoice;
+var fighters = [];
+
 
 // event listeners
 userID.addEventListener("keyup", allowSubmit);
@@ -37,19 +40,23 @@ function fetchUserData() {
   humanPlayer = createPlayer(humanPlayer);
   renderPlayer(humanPlayer, playerIcon, playerName, playerScore);
   toggleView([userInputView], [gameChoiceView]);
-  changeSubHeading();
+  subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
 }
 
 function setClassicLogic() {
   gameLogic = createClassicGame(gameLogic);
+  fighters = setFighters();
+  console.log(fighters);
   toggleView([gameChoiceView], [chooseFighterView])
-  changeSubHeading();
+  subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
 }
 
 function setDifficultLogic() {
   gameLogic = createDifficultGame(gameLogic);
+  fighters = setFighters();
+  console.log(fighters);
   toggleView([gameChoiceView], [chooseFighterView])
   changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
@@ -58,11 +65,11 @@ function setDifficultLogic() {
 // Data model functions 
 function changeSubHeading() {
   if (!userInputView.classList.contains("hidden")) {
-    subHeading = "Enter your details";
+    return "Enter your details";
   } else if (!gameChoiceView.classList.contains("hidden")) {
-    subHeading = "Select the game type";
+    return "Select the game type";
   } else if (!chooseFighterView.classList.contains("hidden")) {
-    subHeading = "Choose your fighter";
+    return "Choose your fighter";
   }
 }
 
@@ -113,6 +120,10 @@ function createDifficultGame(logicObject) {
   return logicObject;
 }
 
+function setFighters() {
+  return Object.keys(gameLogic);
+}
+
 function addToWins(playerObject) {
   var proxyPlayer = {...playerObject};
   proxyPlayer.wins++;
@@ -120,9 +131,8 @@ function addToWins(playerObject) {
   return playerObject
 }
 
-function compChoose(logicObject) {
-  var choiceArr = Object.keys(logicObject);
-  return choiceArr[getRandomIndex(choiceArr)];
+function compChoose(logicObject, fighters) {
+  return fighters[getRandomIndex(fighters)];
 }
 
 function checkWinner(playerChoice, computerChoice, logicObject) {
