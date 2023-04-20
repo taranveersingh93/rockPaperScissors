@@ -7,22 +7,54 @@
     <title>Rock, Paper, Scissors</title>
   </head>
   <body>
-    <section class="human-scoreboard">
+    <section class="user-input-view">
+      <h2>Enter your details</h2>
+      <div class="opaque-form-container">
+        <form>
+          <div class="entry-container">
+            <div class="form-entry">
+              <label for="user-name">Enter your warrior name</label>
+              <input type="text" id="user-name">
+            </div>
+            <div class="emoji-entry">
+              <label for="avatar">Select your emoji</label>
+              <select name="avatar" id="avatar">
+                <option class="avatar-icon" value="👤">👤</option>
+                <option class="avatar-icon" value="🧟">🧟</option>
+                <option class="avatar-icon" value="🧞">🧞</option>
+                <option class="avatar-icon" value="🧜‍♀️">🧜‍♀️</option>
+                <option class="avatar-icon" value="🦹‍♀️">🦹‍♀️</option>
+                <option class="avatar-icon" value="🦸‍♀️">🦸‍♀️</option>
+                <option class="avatar-icon" value="👨‍🚀">👨‍🚀</option>
+                <option class="avatar-icon" value="💀">💀</option>
+                <option class="avatar-icon" value="😈">😈</option> 
+                <option class="avatar-icon" value="🐧">🐧</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-submit-div">
+            <button class="form-submit-btn" type="button" disabled>Battle!</button>  
+          </div>
+        </form>
+      </div>
+    </section>
+    <main class="game-view">
+      <section class="human-scoreboard">
       <div class="player-container">
         <section class="player-visual">
-          <div class="player-icon">👤</div>
+          <div class="player-icon">❔</div>
           <div class="player-name">Human</div>
         </section>
         <section class="player-score">
           Wins:
         </section>
       </div>
-    </section>
-    <main>
+      </section>
+      <section class="game-middle">
       <h1>Rock, Paper, Scissors</h1>
       <section class="choose-game-view">
-        <h2>Choose your game</h2>
-        <section class="game-choice-container">
+        <h2 class="game-choice-title hidden">Choose your game</h2>
+        <section class="game-choice-container hidden">
           <section class="classic-container game-card">
             <section class="game-title">
               <img class="title-icon"src="assets/happy-scissors.png" alt="scissors">
@@ -53,8 +85,8 @@
       </section>
       <section class="choose-fighter-view hidden"></section>
       <section class="result-view hidden"></section>
-    </main>
-    <section class="computer-scoreboard">
+      </section>
+      <section class="computer-scoreboard">
       <div class="player-container">
         <section class="player-visual">
           <div class="player-icon">&#x1F4BB;</div>
@@ -63,7 +95,8 @@
         <section class="player-score">
           Wins:
         </section>
-    </section>
+      </section>
+    </main>
     <script type="text/javascript" src="main.js"></script>
   </body>
 </html>
