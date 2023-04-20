@@ -189,11 +189,8 @@ function toggleView(fromViews, toViews) {
   for (var i = 0; i < fromViews.length; i++) {
     hideDomElement(fromViews[i]);
   }
-
   for (var i = 0; i < toViews.length; i++) {
     showDomElement(toViews[i]);
   }
 }
-humanPlayer = createPlayer(humanPlayer);
-gameLogic = createDifficultGame(gameLogic);
-console.log(checkResult("paper", gameLogic));
+
