@@ -6,6 +6,10 @@ var formNewSubmitBtn = document.querySelector(".form-new-submit-btn");
 var playerIcon = document.querySelector(".player-icon");
 var playerName = document.querySelector(".player-name");
 var playerScore = document.querySelector(".player-score");
+var userInputView = document.querySelector(".user-input-view");
+var gameView = document.querySelector(".game-view");
+var gameChoiceTitle = document.querySelector(".game-choice-title");
+var gameChoiceContainer = document.querySelector(".game-choice-container");
 
 //Global variables
 var computerPlayer = {
@@ -20,6 +24,7 @@ userID.addEventListener("keyup", allowSubmit);
 formSubmitBtn.addEventListener("click", function() {
   humanPlayer = createPlayer(humanPlayer);
   renderPlayer(humanPlayer, playerIcon, playerName, playerScore);
+  toggleView([userInputView], [gameChoiceTitle, gameChoiceContainer]);
 });
 
 // Data model functions 
@@ -31,11 +36,6 @@ function allowSubmit() {
     formSubmitBtn.disabled = true;
     formSubmitBtn.classList.remove("submit-btn-alt");
   }
-}
-
-function modifySubmitBtn() {
-  formSubmitBtn.innerText = "Let's rock...paper & scissors!"
-  formSubmitBtn.classList.add("form-new-submit-btn")
 }
 
 function createPlayer(playerObject) {
@@ -55,4 +55,22 @@ function renderPlayer(playerObject, domIcon, domName, domScore) {
   domIcon.innerText = playerObject.avatar;
   domName.innerText = playerObject.name;
   domScore.innerText = `Wins: ${playerObject.wins}`;
+}
+
+function hideDomElement(element) {
+  element.classList.add("hidden");
+}
+
+function showDomElement(element) {
+  element.classList.remove("hidden");
+}
+
+function toggleView(fromViews, toViews) {
+  for (var i = 0; i < fromViews.length; i++) {
+    hideDomElement(fromViews[i]);
+  }
+
+  for (var i = 0; i < toViews.length; i++) {
+    showDomElement(toViews[i]);
+  }
 }
