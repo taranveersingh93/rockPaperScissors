@@ -8,10 +8,12 @@ var playerName = document.querySelector(".player-name");
 var playerScore = document.querySelector(".player-score");
 var userInputView = document.querySelector(".user-input-view");
 var gameView = document.querySelector(".game-view");
+var chooseFighterView = document.querySelector(".choose-fighter-view");
 var gameChoiceTitle = document.querySelector(".game-choice-title");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
 var classicContainer = document.querySelector(".classic-container");
-var difficultContainer = document.querySelector(".difficultContainer");
+var difficultContainer = document.querySelector(".difficult-container");
+
 
 //Global variables
 var computerPlayer = {
@@ -26,21 +28,23 @@ var gameLogic = {};
 userID.addEventListener("keyup", allowSubmit);
 formSubmitBtn.addEventListener("click", fetchUserData);
 classicContainer.addEventListener("click", setClassicLogic);
-//difficultContainer.addEventListener("click", setDifficultLogic);
+difficultContainer.addEventListener("click", setDifficultLogic);
 
 // orchestrating functions
 function fetchUserData() {
   humanPlayer = createPlayer(humanPlayer);
   renderPlayer(humanPlayer, playerIcon, playerName, playerScore);
-  toggleView([userInputView], [gameChoiceTitle, gameChoiceContainer]);
+  toggleView([userInputView], [gameView]);
 }
 
 function setClassicLogic() {
   gameLogic = createClassicGame(gameLogic);
+  toggleView([gameView], [chooseFighterView])
 }
 
 function setDifficultLogic() {
   gameLogic = createDifficultGame(gameLogic);
+  toggleView([gameView], [chooseFighterView])
 }
 
 // Data model functions 
