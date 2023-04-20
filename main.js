@@ -72,10 +72,22 @@ function createPlayer(playerObject) {
 
 function createClassicGame(logicObject) {
   var proxyLogic = {
-    scissors: "paper",
-    paper: "rock",
-    rock: "scissors"
-  }
+    scissors: ["paper"],
+    paper: ["rock"],
+    rock: ["scissors"]
+  };
+  logicObject = {...proxyLogic};
+  return logicObject;
+}
+
+function createDifficultGame(logicObject) {
+  var proxyLogic = {
+    rock: ["scissors, lizard"], 
+    scissors: ["paper, lizard"], 
+    paper: ["rock", "alien"], 
+    lizard: ["paper", "alien"],
+    alien: ["rock", "scissors"] 
+  };
   logicObject = {...proxyLogic};
   return logicObject;
 }
@@ -94,7 +106,15 @@ function compChoose(logicObject) {
 
 function checkWinner(playerChoice, computerChoice, logicObject) {
   console.log("computer choice", computerChoice)
-  if (logicObject[playerChoice] === computerChoice) {
+  var winFound = false;
+
+  for (var i = 0; i < logicObject[playerChoice].length; i++) {
+    if(logicObject[playerChoice][i] === computerChoice) {
+      winFound = true;
+    }
+  }
+
+  if (winFound) {
     console.log("player won")
     humanPlayer = addToWins(humanPlayer);
     console.log(computerPlayer)
@@ -151,5 +171,5 @@ function toggleView(fromViews, toViews) {
   }
 }
 humanPlayer = createPlayer(humanPlayer);
-gameLogic = createClassicGame(gameLogic);
+gameLogic = createDifficultGame(gameLogic);
 console.log(checkResult("paper", gameLogic));
