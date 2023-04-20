@@ -7,12 +7,13 @@ var playerIcon = document.querySelector(".player-icon");
 var playerName = document.querySelector(".player-name");
 var playerScore = document.querySelector(".player-score");
 var userInputView = document.querySelector(".user-input-view");
-var gameView = document.querySelector(".game-view");
+var gameChoiceView = document.querySelector(".game-choice-view");
 var chooseFighterView = document.querySelector(".choose-fighter-view");
 var gameChoiceTitle = document.querySelector(".game-choice-title");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
 var classicContainer = document.querySelector(".classic-container");
 var difficultContainer = document.querySelector(".difficult-container");
+var domSubHeading = document.querySelector("h2");
 
 
 //Global variables
@@ -23,6 +24,7 @@ var computerPlayer = {
 };
 var humanPlayer = {};
 var gameLogic = {};
+var subHeading = "Enter your details"
 
 // event listeners
 userID.addEventListener("keyup", allowSubmit);
@@ -34,20 +36,35 @@ difficultContainer.addEventListener("click", setDifficultLogic);
 function fetchUserData() {
   humanPlayer = createPlayer(humanPlayer);
   renderPlayer(humanPlayer, playerIcon, playerName, playerScore);
-  toggleView([userInputView], [gameView]);
+  toggleView([userInputView], [gameChoiceView]);
+  changeSubHeading();
+  renderSubHeading(domSubHeading, subHeading);
 }
 
 function setClassicLogic() {
   gameLogic = createClassicGame(gameLogic);
-  toggleView([gameView], [chooseFighterView])
+  toggleView([gameChoiceView], [chooseFighterView])
+  changeSubHeading();
+  renderSubHeading(domSubHeading, subHeading);
 }
 
 function setDifficultLogic() {
   gameLogic = createDifficultGame(gameLogic);
-  toggleView([gameView], [chooseFighterView])
+  toggleView([gameChoiceView], [chooseFighterView])
+  changeSubHeading();
+  renderSubHeading(domSubHeading, subHeading);
 }
 
 // Data model functions 
+function changeSubHeading() {
+  if (!userInputView.classList.contains("hidden")) {
+    subHeading = "Enter your details";
+  } else if (!gameChoiceView.classList.contains("hidden")) {
+    subHeading = "Select the game type";
+  } else if (!chooseFighterView.classList.contains("hidden")) {
+    subHeading = "Choose your fighter";
+  }
+}
 
 function getRandomIndex(array) {
   return Math.floor(Math.random() * array.length);
@@ -150,6 +167,9 @@ function checkResult(yourChoice, logicObject) {
 
 
 //DOM functions
+function renderSubHeading(dom, variable) {
+  dom.innerText = variable;
+}
 
 function renderPlayer(playerObject, domIcon, domName, domScore) {
   domIcon.innerText = playerObject.avatar;
