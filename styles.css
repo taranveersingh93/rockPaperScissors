@@ -89,17 +89,23 @@ form {
 
 .form-submit-btn {
   font-size: 20px;
-}
-
-.form-new-submit-btn {
-  align-self: flex-end;
-  font-size: 20px;
-  width: 100%;
+  margin-top: 20px;
+  width: 40%;
   height: 40px;
-  background-color: #201E50;
-  color: white;
   transition-duration: 0.2s;
 }
+
+.submit-btn-alt {
+  color: white;
+  background-color: #201E50;
+}
+
+.submit-btn-alt:hover {
+  color: #201E50;
+  background-color: white;
+  cursor: pointer;
+}
+
 /* landing page sides */
 
 .human-scoreboard, .computer-scoreboard {
