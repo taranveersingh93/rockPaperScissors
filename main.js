@@ -10,6 +10,8 @@ var userInputView = document.querySelector(".user-input-view");
 var gameView = document.querySelector(".game-view");
 var gameChoiceTitle = document.querySelector(".game-choice-title");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
+var classicContainer = document.querySelector(".classic-container");
+var difficultContainer = document.querySelector(".difficultContainer");
 
 //Global variables
 var computerPlayer = {
@@ -18,16 +20,35 @@ var computerPlayer = {
   wins: 0
 };
 var humanPlayer = {};
+var gameLogic = {};
 
 // event listeners
 userID.addEventListener("keyup", allowSubmit);
-formSubmitBtn.addEventListener("click", function() {
+formSubmitBtn.addEventListener("click", fetchUserData);
+classicContainer.addEventListener("click", setClassicLogic);
+//difficultContainer.addEventListener("click", setDifficultLogic);
+
+// orchestrating functions
+function fetchUserData() {
   humanPlayer = createPlayer(humanPlayer);
   renderPlayer(humanPlayer, playerIcon, playerName, playerScore);
   toggleView([userInputView], [gameChoiceTitle, gameChoiceContainer]);
-});
+}
+
+function setClassicLogic() {
+  gameLogic = createClassicGame(gameLogic);
+}
+
+function setDifficultLogic() {
+  gameLogic = createDifficultGame(gameLogic);
+}
 
 // Data model functions 
+
+function getRandomIndex(array) {
+  return Math.floor(Math.random() * array.length);
+}
+
 function allowSubmit() {
   if(userID.value) {
     formSubmitBtn.disabled = false;
@@ -48,6 +69,61 @@ function createPlayer(playerObject) {
   playerObject = proxyPlayer;
   return playerObject;
 }
+
+function createClassicGame(logicObject) {
+  var proxyLogic = {
+    scissors: "paper",
+    paper: "rock",
+    rock: "scissors"
+  }
+  logicObject = {...proxyLogic};
+  return logicObject;
+}
+
+function addToWins(playerObject) {
+  var proxyPlayer = {...playerObject};
+  proxyPlayer.wins++;
+  playerObject = proxyPlayer;
+  return playerObject
+}
+
+function compChoose(logicObject) {
+  var choiceArr = Object.keys(logicObject);
+  return choiceArr[getRandomIndex(choiceArr)];
+}
+
+function checkWinner(playerChoice, computerChoice, logicObject) {
+  console.log("computer choice", computerChoice)
+  if (logicObject[playerChoice] === computerChoice) {
+    console.log("player won")
+    humanPlayer = addToWins(humanPlayer);
+    console.log(computerPlayer)
+    console.log(humanPlayer);
+    return `Player won`
+  } else {
+    console.log("computer won")
+    computerPlayer = addToWins(computerPlayer);
+    console.log(computerPlayer)
+    console.log(humanPlayer);
+    return `Computer won`
+  }
+}
+
+function checkDraw(playerChoice, computerChoice) {
+  console.log(computerChoice, "computer choice")
+  return playerChoice === computerChoice
+}
+
+function checkResult(yourChoice, logicObject) {
+  var computerChoice = compChoose(logicObject);
+
+  if(checkDraw(yourChoice, computerChoice)) {
+    return `It's a draw`;
+  } else {
+    return checkWinner(yourChoice, computerChoice, logicObject);
+  };
+}
+
 
 //DOM functions
 
@@ -74,3 +150,6 @@ function toggleView(fromViews, toViews) {
     showDomElement(toViews[i]);
   }
 }
+humanPlayer = createPlayer(humanPlayer);
+gameLogic = createClassicGame(gameLogic);
+console.log(checkResult("paper", gameLogic));
