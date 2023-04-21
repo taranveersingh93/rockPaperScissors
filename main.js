@@ -66,7 +66,7 @@ function setDifficultLogic() {
   fighters = setFighters();
   console.log(fighters);
   toggleView([gameChoiceView], [chooseFighterView])
-  changeSubHeading();
+  subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
   showFighters(fighters);
 }
