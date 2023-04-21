@@ -24,7 +24,7 @@ var game = {
   logic: {},
   players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "&#x1F4BB;", 0)],
   subHeading: changeSubHeading(),
-  fighters: []
+  fighters: [],
 };
 
 // event listeners
@@ -61,8 +61,8 @@ function setClassicLogic() {
 }
 
 function setDifficultLogic() {
-  gameLogic = createDifficultGame(gameLogic);
-  fighters = setFighters();
+  game.logic = createDifficultGame(game.logic);
+  game.fighters = setFighters(game);
   toggleView([gameChoiceView], [chooseFighterView]);
   game.subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, game.subHeading);
@@ -112,7 +112,8 @@ function createPlayer(label, icon, score) {
   var player = {
     name: label,
     avatar: icon,
-    wins: score
+    wins: score,
+    choice: ""
   };
   return player;
 }
