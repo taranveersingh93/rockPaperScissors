@@ -82,6 +82,7 @@ function setPlayerChoice(event) {
   humanChoice = assignChoice(event);
   subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
+  console.log(humanChoice)
 }
 
 // Data model functions 
@@ -146,6 +147,10 @@ function createDifficultGame(logicObject) {
 
 function setFighters() {
   return Object.keys(gameLogic);
+}
+
+function assignChoice(event) {
+  return event.target.id;
 }
 
 function addToWins(playerObject) {
