@@ -3,9 +3,9 @@ var userID = document.querySelector("#user-name");
 var userAvatar = document.querySelector("#avatar");
 var formSubmitBtn = document.querySelector(".form-submit-btn");
 var formNewSubmitBtn = document.querySelector(".form-new-submit-btn");
-var playerIcon = document.querySelector(".player-icon");
-var playerName = document.querySelector(".player-name");
-var playerScore = document.querySelector(".player-score");
+var domPlayerIcon = document.querySelector(".player-icon");
+var domPlayerName = document.querySelector(".player-name");
+var domPlayerScore = document.querySelector(".player-score");
 var userInputView = document.querySelector(".user-input-view");
 var gameChoiceView = document.querySelector(".game-choice-view");
 var chooseFighterView = document.querySelector(".choose-fighter-view");
@@ -19,17 +19,13 @@ var domFighters = document.querySelector(".all-fighters");
 
 
 //Global variables
-var computerPlayer = {
-  name: "Computer",
-  avatar: "&#x1F4BB;",
-  wins: 0
-};
-var humanPlayer = {};
-var gameLogic = {};
-var subHeading;
-var humanChoice;
-var fighters = [];
 
+var game = {
+  logic: {},
+  players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "&#x1F4BB;", 0)],
+  subHeading: changeSubHeading(),
+  fighters: []
+};
 
 // event listeners
 userID.addEventListener("keyup", allowSubmit);
@@ -48,28 +44,29 @@ domFighters.addEventListener("click", function(event) {
 
 // orchestrating functions
 function fetchUserData() {
-  humanPlayer = createPlayer(humanPlayer);
-  renderPlayer(humanPlayer, playerIcon, playerName, playerScore);
+  game.players[0] = createPlayer(userID.value, userAvatar.value, 0);
+  renderPlayer(game.players[0], domPlayerIcon, domPlayerName, domPlayerScore);
   toggleView([userInputView], [gameChoiceView]);
-  subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, subHeading);
+  game.subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, game.subHeading);
+  console.log(game)
 }
 
 function setClassicLogic() {
   gameLogic = createClassicGame(gameLogic);
   fighters = setFighters();
   toggleView([gameChoiceView], [chooseFighterView])
-  subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, subHeading);
+  game.subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, game.subHeading);
   showFighters(fighters);
 }
 
 function setDifficultLogic() {
   gameLogic = createDifficultGame(gameLogic);
   fighters = setFighters();
-  toggleView([gameChoiceView], [chooseFighterView])
-  subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, subHeading);
+  toggleView([gameChoiceView], [chooseFighterView]);
+  game.subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, game.subHeading);
   showFighters(fighters);
 }
 
@@ -112,15 +109,13 @@ function allowSubmit() {
   }
 }
 
-function createPlayer(playerObject) {
-  var proxyPlayer = {...playerObject};
-  var label = userID.value;
-  var icon = userAvatar.value;
-  proxyPlayer.name = label;
-  proxyPlayer.avatar = icon;
-  proxyPlayer.wins = 0;
-  playerObject = proxyPlayer;
-  return playerObject;
+function createPlayer(label, icon, score) {
+  var player = {
+    name: label,
+    avatar: icon,
+    wins: score
+  };
+  return player;
 }
 
 function createClassicGame(logicObject) {
