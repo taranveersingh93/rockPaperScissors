@@ -14,6 +14,7 @@ var gameChoiceContainer = document.querySelector(".game-choice-container");
 var classicContainer = document.querySelector(".classic-container");
 var difficultContainer = document.querySelector(".difficult-container");
 var domSubHeading = document.querySelector("h2");
+var domFighters = document.querySelector(".single-fighter");
 
 
 //Global variables
@@ -51,6 +52,7 @@ function setClassicLogic() {
   toggleView([gameChoiceView], [chooseFighterView])
   subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
+  showFighters();
 }
 
 function setDifficultLogic() {
@@ -60,6 +62,12 @@ function setDifficultLogic() {
   toggleView([gameChoiceView], [chooseFighterView])
   changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
+  showFighters(fighters);
+}
+
+function showFighters(fighterArr) {
+  createAllHTML(fighterArr);
+  renderFighters(fighters);
 }
 
 // Data model functions 
@@ -185,6 +193,29 @@ function renderPlayer(playerObject, domIcon, domName, domScore) {
   domIcon.innerText = playerObject.avatar;
   domName.innerText = playerObject.name;
   domScore.innerText = `Wins: ${playerObject.wins}`;
+}
+
+function createSingleHTML(fighter) {
+  var htmlCode = "";
+  htmlCode += 
+  `
+  <section class="single-fighter" id="${fighter}">
+    <img src="assets/${fighter}.png" alt="${fighter} icon">
+  </section>
+  `;
+  return htmlCode;
+} 
+
+function createAllHTML(fighterArr) {
+  var htmlCode = "";
+  for (var i = 0; i < fighterArr.length; i++) {
+    htmlCode += createSingleHTML(fighterArr[i]);
+  }
+  return htmlCode
+}
+
+function renderFighters(fighterArr) {
+  domFighters.innerHTML = createAllHTML(fighterArr);
 }
 
 function hideDomElement(element) {
