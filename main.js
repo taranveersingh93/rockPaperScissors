@@ -9,6 +9,7 @@ var playerScore = document.querySelector(".player-score");
 var userInputView = document.querySelector(".user-input-view");
 var gameChoiceView = document.querySelector(".game-choice-view");
 var chooseFighterView = document.querySelector(".choose-fighter-view");
+var resultView = document.querySelector(".result-view");
 var gameChoiceTitle = document.querySelector(".game-choice-title");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
 var classicContainer = document.querySelector(".classic-container");
@@ -40,7 +41,10 @@ domFighters.addEventListener("mouseover", function(event) {
 });
 domFighters.addEventListener("mouseout", function(event) {
   hideBeatCard(event);
-})
+});
+domFighters.addEventListener("click", function(event) {
+  setPlayerChoice(event);
+});
 
 // orchestrating functions
 function fetchUserData() {
@@ -54,7 +58,6 @@ function fetchUserData() {
 function setClassicLogic() {
   gameLogic = createClassicGame(gameLogic);
   fighters = setFighters();
-  console.log(fighters);
   toggleView([gameChoiceView], [chooseFighterView])
   subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
@@ -64,7 +67,6 @@ function setClassicLogic() {
 function setDifficultLogic() {
   gameLogic = createDifficultGame(gameLogic);
   fighters = setFighters();
-  console.log(fighters);
   toggleView([gameChoiceView], [chooseFighterView])
   subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
@@ -76,6 +78,12 @@ function showFighters(fighterArr) {
   renderFighters(fighters);
 }
 
+function setPlayerChoice(event) {
+  humanChoice = assignChoice(event);
+  subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, subHeading);
+}
+
 // Data model functions 
 function changeSubHeading() {
   if (!userInputView.classList.contains("hidden")) {
@@ -84,6 +92,8 @@ function changeSubHeading() {
     return "Select the game type";
   } else if (!chooseFighterView.classList.contains("hidden")) {
     return "Choose your fighter";
+  } else if (!resultView.classList.contains("hidden")) {
+    return "Verdict is out!";
   }
 }
 
@@ -160,16 +170,10 @@ function checkWinner(playerChoice, computerChoice, logicObject) {
   }
 
   if (winFound) {
-    console.log("player won")
     humanPlayer = addToWins(humanPlayer);
-    console.log(computerPlayer)
-    console.log(humanPlayer);
     return `Player won`
   } else {
-    console.log("computer won")
     computerPlayer = addToWins(computerPlayer);
-    console.log(computerPlayer)
-    console.log(humanPlayer);
     return `Computer won`
   }
 }
