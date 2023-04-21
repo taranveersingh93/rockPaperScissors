@@ -346,6 +346,11 @@ h4 {
   justify-content: center;
 }
 
+.result-card:hover {
+  background-color: rgba(255,255,255,0.5);
+  cursor: pointer;
+}
+
 .result-unknown {
   background-color: rgba(255,255,255,0.2);
   border-radius: 12px;
@@ -356,6 +361,13 @@ h4 {
   align-items: center;
   justify-content: center;
   color: rgba(255,255,255,0.4);
+  transform: all 1s ease;
+}
+
+.result-unknown:hover {
+  background-color: rgba(255,255,255,0.5);
+  color: white;
+  cursor: pointer;
 }
 
 .winner {
