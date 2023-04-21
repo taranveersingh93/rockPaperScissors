@@ -76,6 +76,7 @@ function showFighters(gameObject) {
 
 function setPlayerChoice(event) {
   game.players[0] = assignChoice(event, game.players[0]);
+  toggleView([chooseFighterView], [resultView]);
   game.subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, game.subHeading);
 }
@@ -89,7 +90,7 @@ function changeSubHeading() {
   } else if (!chooseFighterView.classList.contains("hidden")) {
     return "Choose your fighter";
   } else if (!resultView.classList.contains("hidden")) {
-    return "Verdict is out!";
+    return "Reveal computer's choice!";
   }
 }
 
