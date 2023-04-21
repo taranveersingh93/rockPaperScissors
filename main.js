@@ -3,9 +3,9 @@ var userID = document.querySelector("#user-name");
 var userAvatar = document.querySelector("#avatar");
 var formSubmitBtn = document.querySelector(".form-submit-btn");
 var formNewSubmitBtn = document.querySelector(".form-new-submit-btn");
-var playerIcon = document.querySelector(".player-icon");
-var playerName = document.querySelector(".player-name");
-var playerScore = document.querySelector(".player-score");
+var domPlayerIcon = document.querySelector(".player-icon");
+var domPlayerName = document.querySelector(".player-name");
+var domPlayerScore = document.querySelector(".player-score");
 var userInputView = document.querySelector(".user-input-view");
 var gameChoiceView = document.querySelector(".game-choice-view");
 var chooseFighterView = document.querySelector(".choose-fighter-view");
@@ -19,17 +19,13 @@ var domFighters = document.querySelector(".all-fighters");
 
 
 //Global variables
-var computerPlayer = {
-  name: "Computer",
-  avatar: "&#x1F4BB;",
-  wins: 0
-};
-var humanPlayer = {};
-var gameLogic = {};
-var subHeading;
-var humanChoice;
-var fighters = [];
 
+var game = {
+  logic: {},
+  players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "&#x1F4BB;", 0)],
+  subHeading: changeSubHeading(),
+  fighters: [],
+};
 
 // event listeners
 userID.addEventListener("keyup", allowSubmit);
@@ -48,41 +44,40 @@ domFighters.addEventListener("click", function(event) {
 
 // orchestrating functions
 function fetchUserData() {
-  humanPlayer = createPlayer(humanPlayer);
-  renderPlayer(humanPlayer, playerIcon, playerName, playerScore);
+  game.players[0] = createPlayer(userID.value, userAvatar.value, 0);
+  renderPlayer(game.players[0], domPlayerIcon, domPlayerName, domPlayerScore);
   toggleView([userInputView], [gameChoiceView]);
-  subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, subHeading);
+  game.subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, game.subHeading);
 }
 
 function setClassicLogic() {
-  gameLogic = createClassicGame(gameLogic);
-  fighters = setFighters();
-  toggleView([gameChoiceView], [chooseFighterView])
-  subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, subHeading);
-  showFighters(fighters);
+  game.logic = createClassicGame(game.logic);
+  game.fighters = setFighters(game);
+  toggleView([gameChoiceView], [chooseFighterView]);
+  game.subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, game.subHeading);
+  showFighters(game);
 }
 
 function setDifficultLogic() {
-  gameLogic = createDifficultGame(gameLogic);
-  fighters = setFighters();
-  toggleView([gameChoiceView], [chooseFighterView])
-  subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, subHeading);
-  showFighters(fighters);
+  game.logic = createDifficultGame(game.logic);
+  game.fighters = setFighters(game);
+  toggleView([gameChoiceView], [chooseFighterView]);
+  game.subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, game.subHeading);
+  showFighters(game);
 }
 
-function showFighters(fighterArr) {
-  createAllHTML(fighterArr, gameLogic);
-  renderFighters(fighters);
+function showFighters(gameObject) {
+  createAllHTML(gameObject);
+  renderFighters(gameObject);
 }
 
 function setPlayerChoice(event) {
-  humanChoice = assignChoice(event);
-  subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, subHeading);
-  console.log(humanChoice)
+  game.players[0] = assignChoice(event, game.players[0]);
+  game.subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, game.subHeading);
 }
 
 // Data model functions 
@@ -112,15 +107,14 @@ function allowSubmit() {
   }
 }
 
-function createPlayer(playerObject) {
-  var proxyPlayer = {...playerObject};
-  var label = userID.value;
-  var icon = userAvatar.value;
-  proxyPlayer.name = label;
-  proxyPlayer.avatar = icon;
-  proxyPlayer.wins = 0;
-  playerObject = proxyPlayer;
-  return playerObject;
+function createPlayer(label, icon, score) {
+  var player = {
+    name: label,
+    avatar: icon,
+    wins: score,
+    choice: ""
+  };
+  return player;
 }
 
 function createClassicGame(logicObject) {
@@ -145,12 +139,15 @@ function createDifficultGame(logicObject) {
   return logicObject;
 }
 
-function setFighters() {
-  return Object.keys(gameLogic);
+function setFighters(gameObject) {
+  return Object.keys(gameObject.logic);
 }
 
-function assignChoice(event) {
-  return event.target.id;
+function assignChoice(event, playerObject) {
+  var proxyPlayer = {...playerObject};
+  proxyPlayer.choice = event.target.id;
+  playerObject = proxyPlayer;
+  return playerObject;
 }
 
 function addToWins(playerObject) {
@@ -165,7 +162,6 @@ function compChoose(logicObject, fighters) {
 }
 
 function checkWinner(playerChoice, computerChoice, logicObject) {
-  console.log("computer choice", computerChoice)
   var winFound = false;
 
   for (var i = 0; i < logicObject[playerChoice].length; i++) {
@@ -184,7 +180,6 @@ function checkWinner(playerChoice, computerChoice, logicObject) {
 }
 
 function checkDraw(playerChoice, computerChoice) {
-  console.log(computerChoice, "computer choice")
   return playerChoice === computerChoice
 }
 
@@ -197,7 +192,6 @@ function checkResult(yourChoice, logicObject) {
     return checkWinner(yourChoice, computerChoice, logicObject);
   };
 }
-
 
 //DOM functions
 function renderSubHeading(dom, variable) {
@@ -220,10 +214,10 @@ function createSingleHTML(fighter, gameObject) {
         Beats
         <div class="beats">
   `
-  for (var i = 0; i < gameObject[fighter].length; i++) {
+  for (var i = 0; i < gameObject.logic[fighter].length; i++) {
     htmlCode += 
     `
-    <img class="beat-fighter" src="assets/${gameObject[fighter][i]}.png">
+    <img class="beat-fighter" src="assets/${gameObject.logic[fighter][i]}.png">
     `
   }
           
@@ -237,17 +231,16 @@ function createSingleHTML(fighter, gameObject) {
   return htmlCode;
 } 
 
-function createAllHTML(fighterArr, gameObject) {
+function createAllHTML(gameObject) {
   var htmlCode = "";
-  console.log("fighterArr", fighterArr)
-  for (var i = 0; i < fighterArr.length; i++) {
-    htmlCode += createSingleHTML(fighterArr[i], gameObject);
+  for (var i = 0; i < gameObject.fighters.length; i++) {
+    htmlCode += createSingleHTML(gameObject.fighters[i], gameObject);
   }
   return htmlCode
 }
 
-function renderFighters(fighterArr) {
-  domFighters.innerHTML = createAllHTML(fighters, gameLogic);
+function renderFighters(gameObject) {
+  domFighters.innerHTML = createAllHTML(gameObject);
 }
 
 function showBeatCard(event) {
