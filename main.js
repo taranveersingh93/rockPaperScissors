@@ -9,11 +9,13 @@ var playerScore = document.querySelector(".player-score");
 var userInputView = document.querySelector(".user-input-view");
 var gameChoiceView = document.querySelector(".game-choice-view");
 var chooseFighterView = document.querySelector(".choose-fighter-view");
+var resultView = document.querySelector(".result-view");
 var gameChoiceTitle = document.querySelector(".game-choice-title");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
 var classicContainer = document.querySelector(".classic-container");
 var difficultContainer = document.querySelector(".difficult-container");
 var domSubHeading = document.querySelector("h2");
+var domFighters = document.querySelector(".all-fighters");
 
 
 //Global variables
@@ -34,6 +36,15 @@ userID.addEventListener("keyup", allowSubmit);
 formSubmitBtn.addEventListener("click", fetchUserData);
 classicContainer.addEventListener("click", setClassicLogic);
 difficultContainer.addEventListener("click", setDifficultLogic);
+domFighters.addEventListener("mouseover", function(event) {
+  showBeatCard(event);
+});
+domFighters.addEventListener("mouseout", function(event) {
+  hideBeatCard(event);
+});
+domFighters.addEventListener("click", function(event) {
+  setPlayerChoice(event);
+});
 
 // orchestrating functions
 function fetchUserData() {
@@ -47,18 +58,29 @@ function fetchUserData() {
 function setClassicLogic() {
   gameLogic = createClassicGame(gameLogic);
   fighters = setFighters();
-  console.log(fighters);
   toggleView([gameChoiceView], [chooseFighterView])
   subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
+  showFighters(fighters);
 }
 
 function setDifficultLogic() {
   gameLogic = createDifficultGame(gameLogic);
   fighters = setFighters();
-  console.log(fighters);
   toggleView([gameChoiceView], [chooseFighterView])
-  changeSubHeading();
+  subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, subHeading);
+  showFighters(fighters);
+}
+
+function showFighters(fighterArr) {
+  createAllHTML(fighterArr, gameLogic);
+  renderFighters(fighters);
+}
+
+function setPlayerChoice(event) {
+  humanChoice = assignChoice(event);
+  subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, subHeading);
 }
 
@@ -70,6 +92,8 @@ function changeSubHeading() {
     return "Select the game type";
   } else if (!chooseFighterView.classList.contains("hidden")) {
     return "Choose your fighter";
+  } else if (!resultView.classList.contains("hidden")) {
+    return "Verdict is out!";
   }
 }
 
@@ -109,12 +133,12 @@ function createClassicGame(logicObject) {
 }
 
 function createDifficultGame(logicObject) {
-  var proxyLogic = {
-    rock: ["scissors, lizard"], 
-    scissors: ["paper, lizard"], 
+  var proxyLogic = {  
+    rock: ["scissors", "lizard"], 
+    scissors: ["paper", "lizard"], 
     paper: ["rock", "alien"], 
     lizard: ["paper", "alien"],
-    alien: ["rock", "scissors"] 
+    alien: ["scissors", "rock"] 
   };
   logicObject = {...proxyLogic};
   return logicObject;
@@ -146,16 +170,10 @@ function checkWinner(playerChoice, computerChoice, logicObject) {
   }
 
   if (winFound) {
-    console.log("player won")
     humanPlayer = addToWins(humanPlayer);
-    console.log(computerPlayer)
-    console.log(humanPlayer);
     return `Player won`
   } else {
-    console.log("computer won")
     computerPlayer = addToWins(computerPlayer);
-    console.log(computerPlayer)
-    console.log(humanPlayer);
     return `Computer won`
   }
 }
@@ -185,6 +203,64 @@ function renderPlayer(playerObject, domIcon, domName, domScore) {
   domIcon.innerText = playerObject.avatar;
   domName.innerText = playerObject.name;
   domScore.innerText = `Wins: ${playerObject.wins}`;
+}
+
+function createSingleHTML(fighter, gameObject) {
+  var htmlCode = "";
+  htmlCode += 
+  `
+  <section class="fighter-card">
+    <img src="assets/${fighter}.png" alt="${fighter} icon" class="single-fighter" id="${fighter}">
+      <div class="beat-card" id="${fighter}-beat-card">
+        Beats
+        <div class="beats">
+  `
+  for (var i = 0; i < gameObject[fighter].length; i++) {
+    htmlCode += 
+    `
+    <img class="beat-fighter" src="assets/${gameObject[fighter][i]}.png">
+    `
+  }
+          
+  htmlCode += 
+  `
+        </div>
+      </div>
+  </section>
+  `
+  ;
+  return htmlCode;
+} 
+
+function createAllHTML(fighterArr, gameObject) {
+  var htmlCode = "";
+  console.log("fighterArr", fighterArr)
+  for (var i = 0; i < fighterArr.length; i++) {
+    htmlCode += createSingleHTML(fighterArr[i], gameObject);
+  }
+  return htmlCode
+}
+
+function renderFighters(fighterArr) {
+  domFighters.innerHTML = createAllHTML(fighters, gameLogic);
+}
+
+function showBeatCard(event) {
+  if (event.target.classList.contains("single-fighter")) {
+    var parentID = event.target.id;
+    var cardID = `${parentID}-beat-card`;
+    var targetCard = document.querySelector("#"+cardID);
+    targetCard.classList.add("show");
+  }
+}
+
+function hideBeatCard(event) {
+  if(event.target.classList.contains("single-fighter")) {
+    var parentID = event.target.id;
+    var cardID = `${parentID}-beat-card`;
+    var targetCard = document.querySelector("#"+cardID);
+    targetCard.classList.remove("show");
+  }
 }
 
 function hideDomElement(element) {

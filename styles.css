@@ -255,3 +255,66 @@ h4 {
 .hidden {
   display: none ;
 }
+
+/* choose fighter */
+.choose-fighter-view {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 60%;
+}
+
+.choose-fighter {
+  display: flex;
+  align-items: center;
+}
+
+.all-fighters {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.single-fighter {
+  height: 150px;
+}
+
+.fighter-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 400px;
+}
+
+.beat-card {
+  background-color: rgba(60, 63, 104,0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 1px;
+  opacity: 0;
+  border-radius: 12px;
+  color: white;
+  font-size: 25px;
+  font-weight: 200;
+  transition: all 1s ease;
+}
+
+.beat-card.show {
+  opacity: 1;
+  height: 220px;
+  border-radius: 12px;
+  color: white;
+  font-size: 25px;
+  font-weight: 200;
+}
+
+.beats {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.beat-fighter {
+  height: 70px;
+}
