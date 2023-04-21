@@ -75,10 +75,9 @@ function showFighters(gameObject) {
 }
 
 function setPlayerChoice(event) {
-  humanChoice = assignChoice(event);
-  subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, subHeading);
-  console.log(humanChoice)
+  game.players[0] = assignChoice(event, game.players[0]);
+  game.subHeading = changeSubHeading();
+  renderSubHeading(domSubHeading, game.subHeading);
 }
 
 // Data model functions 
@@ -144,8 +143,11 @@ function setFighters(gameObject) {
   return Object.keys(gameObject.logic);
 }
 
-function assignChoice(event) {
-  return event.target.id;
+function assignChoice(event, playerObject) {
+  var proxyPlayer = {...playerObject};
+  proxyPlayer.choice = event.target.id;
+  playerObject = proxyPlayer;
+  return playerObject;
 }
 
 function addToWins(playerObject) {
@@ -160,7 +162,6 @@ function compChoose(logicObject, fighters) {
 }
 
 function checkWinner(playerChoice, computerChoice, logicObject) {
-  console.log("computer choice", computerChoice)
   var winFound = false;
 
   for (var i = 0; i < logicObject[playerChoice].length; i++) {
@@ -179,7 +180,6 @@ function checkWinner(playerChoice, computerChoice, logicObject) {
 }
 
 function checkDraw(playerChoice, computerChoice) {
-  console.log(computerChoice, "computer choice")
   return playerChoice === computerChoice
 }
 
@@ -233,7 +233,6 @@ function createSingleHTML(fighter, gameObject) {
 
 function createAllHTML(gameObject) {
   var htmlCode = "";
-  console.log("fighterArr", gameObject.fighters)
   for (var i = 0; i < gameObject.fighters.length; i++) {
     htmlCode += createSingleHTML(gameObject.fighters[i], gameObject);
   }
