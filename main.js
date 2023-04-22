@@ -37,6 +37,18 @@ var timerID;
 // event listeners
 userID.addEventListener("keyup", allowSubmit);
 formSubmitBtn.addEventListener("click", fetchUserData);
+classicContainer.addEventListener("mouseover", function(event) {
+  showRules(event);
+});
+classicContainer.addEventListener("mouseout", function(event) {
+  collapseRules(event);
+});
+difficultContainer.addEventListener("mouseover", function(event) {
+  showRules(event);
+});
+difficultContainer.addEventListener("mouseout", function(event) {
+  collapseRules(event);
+});
 classicContainer.addEventListener("click", setClassicLogic);
 difficultContainer.addEventListener("click", setDifficultLogic);
 domFighters.addEventListener("mouseover", function(event) {
@@ -79,6 +91,26 @@ function reloadFighterSelection() {
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
+}
+
+function showRules(event) {
+  if(event.target.closest(".game-card").classList.contains("classic-container")) {
+    classicContainer.querySelector(".game-rules").classList.add("visible-classic");
+  } 
+  else if(event.target.closest(".game-card").classList.contains("difficult-container")) {
+    difficultContainer.querySelector(".game-rules").classList.add("visible-difficult");
+  }
+
+}
+
+function collapseRules(event) {
+  if(event.target.closest(".game-card").classList.contains("classic-container")) {
+    classicContainer.querySelector(".game-rules").classList.remove("visible-classic");
+  } 
+
+  if(event.target.closest(".game-card").classList.contains("difficult-container")) {
+    difficultContainer.querySelector(".game-rules").classList.remove("visible-difficult");
+  } 
 }
 
 function setClassicLogic() {

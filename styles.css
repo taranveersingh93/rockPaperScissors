@@ -255,6 +255,22 @@ form {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 1px;
+  opacity: 0;
+  transition: all 1.5s ease;
+
+}
+
+.visible-classic {
+  height: 60px;
+  opacity: 1;
+  transition: all 1.5s ease;
+}
+
+.visible-difficult {
+  height: 110px;
+  opacity: 1;
+  transition: all 1.5s ease;
 }
 
 h3 {
