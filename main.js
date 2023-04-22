@@ -5,7 +5,8 @@ var formSubmitBtn = document.querySelector(".form-submit-btn");
 var formNewSubmitBtn = document.querySelector(".form-new-submit-btn");
 var domPlayerIcon = document.querySelector(".player-icon");
 var domPlayerName = document.querySelector(".player-name");
-var domPlayerScore = document.querySelector(".player-score");
+var domPlayerScore = document.querySelector(".human-score");
+var domComputerScore = document.querySelector(".computer-score");
 var userInputView = document.querySelector(".user-input-view");
 var gameChoiceView = document.querySelector(".game-choice-view");
 var chooseFighterView = document.querySelector(".choose-fighter-view");
@@ -27,6 +28,7 @@ var game = {
   players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "&#x1F4BB;", 0)],
   subHeading: changeSubHeading(),
   fighters: [],
+  lastResult: ""
 };
 
 // event listeners
@@ -88,29 +90,52 @@ function setPlayerChoice(event) {
   renderResultPage()
 }
 
+function renderScore() {
+  domPlayerScore.innerText = game.players[0].wins;
+  domComputerScore.innerText = game.players[1].wins;
+}
+
+function renderDraw(userCard, compCard) {
+  userCard.classList.add("loser");
+  compCard.classList.add("loser");
+  renderScore();
+}
+
+function renderWin(userCard, compCard) {
+  userCard.classList.add("winner");
+  compCard.classList.add("loser");
+  renderScore();
+}
+
+function renderLoss(userCard, compCard) {
+  userCard.classList.add("loser");
+  compCard.classList.add("winner");
+  renderScore();
+}
+
+function announceResult() {
+  var humanCard = document.querySelector(".human-card");
+  var computerCard = document.querySelector(".comp-card");
+  game = processResult(game);
+  if(game.lastResult === "draw") {
+    renderDraw(humanCard, computerCard);
+  } else if (game.lastResult === "win") {
+    renderWin(humanCard, computerCard);
+  } else {
+    renderLoss(humanCard, computerCard);
+  }
+}
+
 function displayResult(event) {
   if(event.target.classList.contains("result-unknown")) {
     var domRevealCard = document.querySelector(".result-unknown");
     var domComputerCard = document.querySelector(".comp-card");
     toggleView(domRevealCard, domComputerCard);
-    setTimeout(announceResult, 1000);
+    setTimeout(announceResult, 300);
   }
 }
 
-function announceResult() {
-  var playerCard = document.querySelector(".human-card");
-  var computerCard = document.querySelector(".comp-card");
-  if(checkResult(game) === "It's a draw") {
-    playerCard.classList.add("loser");
-    computerCard.classList.add("loser");
-  } else if (checkResult(game)) {
-    playerCard.classList.add("winner");
-    computerCard.classList.add("loser");
-  } else {
-    playerCard.classList.add("loser");
-    computerCard.classList.add("winner");
-  }
-}
+
 
 // Data model functions 
 function changeSubHeading() {
@@ -207,13 +232,6 @@ function checkPlayerWin(gameObject) {
     }
   }
   return winFound;
-  // if (winFound) {
-  //   humanPlayer = addToWins(humanPlayer);
-  //   return `Player won`
-  // } else {
-  //   computerPlayer = addToWins(computerPlayer);
-  //   return `Computer won`
-  // }
 }
 
 function checkDraw(gameObject) {
@@ -222,12 +240,40 @@ function checkDraw(gameObject) {
   return playerChoice === computerChoice
 }
 
-function checkResult(gameObject) {
+function processDraw(gameObject) {
+  var proxyObject = {...gameObject};
+  proxyObject.lastResult = "draw";
+  gameObject = proxyObject;
+  return gameObject;
+}
+
+function processWin(gameObject) {
+  var proxyObject = {...gameObject};
+  proxyObject.lastResult = "win";
+  proxyObject.players[0].wins++;
+  gameObject = proxyObject;
+  return gameObject;
+}
+
+function processLoss(gameObject) {
+  var proxyObject = {...gameObject};
+  proxyObject.lastResult = "loss";
+  proxyObject.players[1].wins++;
+  gameObject = proxyObject;
+  return gameObject;
+}
+
+function processResult(gameObject) {
   if(checkDraw(gameObject)) {
-    return `It's a draw`;
+    gameObject = processDraw(gameObject);
+  } else if (checkPlayerWin(gameObject)) {
+    console.log("player win")
+    gameObject = processWin(gameObject);
   } else {
-    return checkPlayerWin(gameObject);
-  };
+    console.log("player loss")
+    gameObject = processLoss(gameObject);
+  }
+  return gameObject;
 }
 
 //DOM functions
