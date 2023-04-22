@@ -59,6 +59,19 @@ function fetchUserData() {
   renderTextToElement(game.subHeading, domSubHeading);
 }
 
+function reloadGameSelection() {
+  toggleView(chooseFighterView, gameChoiceView);
+  game.subHeading = changeSubHeading();
+  renderTextToElement(game.subHeading, domSubHeading);
+}
+
+function reloadFighterSelection() {
+  toggleView(resultView, chooseFighterView);
+  game.subHeading = changeSubHeading();
+  renderTextToElement(game.subHeading, domSubHeading);
+  showFighters(game);
+}
+
 function setClassicLogic() {
   game.logic = createClassicGame(game.logic);
   game.fighters = setFighters(game);
@@ -119,7 +132,6 @@ function renderLoss(userCard, compCard) {
 function announceResult() {
   var humanCard = document.querySelector(".human-card");
   var computerCard = document.querySelector(".comp-card");
-  game = processResult(game);
   renderTextToElement(game.subHeading, domSubHeading);
   if(game.lastResult === "draw") {
     renderDraw(humanCard, computerCard);
@@ -128,6 +140,7 @@ function announceResult() {
   } else {
     renderLoss(humanCard, computerCard);
   }
+  setTimeout(reloadFighterSelection, 4000);
 }
 
 function displayResult(event) {
@@ -135,7 +148,10 @@ function displayResult(event) {
     var domRevealCard = document.querySelector(".result-unknown");
     var domComputerCard = document.querySelector(".comp-card");
     toggleView(domRevealCard, domComputerCard);
+    game = processResult(game);
     setTimeout(announceResult, 300);
+  } else if (event.target.classList.contains("result-card") || event.target.classList.contains("result-single-fighter")) {
+    reloadFighterSelection();
   }
 }
 
