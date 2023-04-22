@@ -5,7 +5,8 @@ var formSubmitBtn = document.querySelector(".form-submit-btn");
 var formNewSubmitBtn = document.querySelector(".form-new-submit-btn");
 var domPlayerIcon = document.querySelector(".player-icon");
 var domPlayerName = document.querySelector(".player-name");
-var domPlayerScore = document.querySelector(".player-score");
+var domPlayerScore = document.querySelector(".human-score");
+var domComputerScore = document.querySelector(".computer-score");
 var userInputView = document.querySelector(".user-input-view");
 var gameChoiceView = document.querySelector(".game-choice-view");
 var chooseFighterView = document.querySelector(".choose-fighter-view");
@@ -24,9 +25,10 @@ var domResultFighters = document.querySelector(".both-fighters");
 
 var game = {
   logic: {},
-  players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "&#x1F4BB;", 0)],
+  players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "💻", 0)],
   subHeading: changeSubHeading(),
   fighters: [],
+  lastResult: ""
 };
 
 // event listeners
@@ -50,10 +52,11 @@ domResultFighters.addEventListener("click", function(event) {
 // orchestrating functions
 function fetchUserData() {
   game.players[0] = createPlayer(userID.value, userAvatar.value, 0);
-  renderPlayer(game.players[0], domPlayerIcon, domPlayerName, domPlayerScore);
+  renderPlayer(game.players[0], domPlayerIcon, domPlayerName);
+  renderScore();
   toggleView(userInputView, gameChoiceView);
   game.subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, game.subHeading);
+  renderTextToElement(game.subHeading, domSubHeading);
 }
 
 function setClassicLogic() {
@@ -61,7 +64,7 @@ function setClassicLogic() {
   game.fighters = setFighters(game);
   toggleView(gameChoiceView, chooseFighterView);
   game.subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, game.subHeading);
+  renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
 }
 
@@ -70,7 +73,7 @@ function setDifficultLogic() {
   game.fighters = setFighters(game);
   toggleView(gameChoiceView, chooseFighterView);
   game.subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, game.subHeading);
+  renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
 }
 
@@ -80,12 +83,51 @@ function showFighters(gameObject) {
 }
 
 function setPlayerChoice(event) {
-  game = assignChoice(event, game);
-  game = compChoose(game)
-  toggleView(chooseFighterView, resultView);
-  game.subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, game.subHeading);
-  renderResultPage()
+  if (event.target.classList.contains("single-fighter")) {
+    game = assignChoice(event, game);
+    game = compChoose(game)
+    toggleView(chooseFighterView, resultView);
+    game.subHeading = changeSubHeading();
+    renderTextToElement(game.subHeading, domSubHeading);
+    renderResultPage();
+  }
+}
+
+function renderScore() {
+  domPlayerScore.innerText = `Wins: ${game.players[0].wins}`;
+  domComputerScore.innerText = `Wins: ${game.players[1].wins}`;
+}
+
+function renderDraw(userCard, compCard) {
+  userCard.classList.add("loser");
+  compCard.classList.add("loser");
+  renderScore();
+}
+
+function renderWin(userCard, compCard) {
+  userCard.classList.add("winner");
+  compCard.classList.add("loser");
+  renderScore();
+}
+
+function renderLoss(userCard, compCard) {
+  userCard.classList.add("loser");
+  compCard.classList.add("winner");
+  renderScore();
+}
+
+function announceResult() {
+  var humanCard = document.querySelector(".human-card");
+  var computerCard = document.querySelector(".comp-card");
+  game = processResult(game);
+  renderTextToElement(game.subHeading, domSubHeading);
+  if(game.lastResult === "draw") {
+    renderDraw(humanCard, computerCard);
+  } else if (game.lastResult === "win") {
+    renderWin(humanCard, computerCard);
+  } else {
+    renderLoss(humanCard, computerCard);
+  }
 }
 
 function displayResult(event) {
@@ -93,24 +135,11 @@ function displayResult(event) {
     var domRevealCard = document.querySelector(".result-unknown");
     var domComputerCard = document.querySelector(".comp-card");
     toggleView(domRevealCard, domComputerCard);
-    setTimeout(announceResult, 1000);
+    setTimeout(announceResult, 300);
   }
 }
 
-function announceResult() {
-  var playerCard = document.querySelector(".human-card");
-  var computerCard = document.querySelector(".comp-card");
-  if(checkResult(game) === "It's a draw") {
-    playerCard.classList.add("loser");
-    computerCard.classList.add("loser");
-  } else if (checkResult(game)) {
-    playerCard.classList.add("winner");
-    computerCard.classList.add("loser");
-  } else {
-    playerCard.classList.add("loser");
-    computerCard.classList.add("winner");
-  }
-}
+
 
 // Data model functions 
 function changeSubHeading() {
@@ -207,13 +236,6 @@ function checkPlayerWin(gameObject) {
     }
   }
   return winFound;
-  // if (winFound) {
-  //   humanPlayer = addToWins(humanPlayer);
-  //   return `Player won`
-  // } else {
-  //   computerPlayer = addToWins(computerPlayer);
-  //   return `Computer won`
-  // }
 }
 
 function checkDraw(gameObject) {
@@ -222,23 +244,53 @@ function checkDraw(gameObject) {
   return playerChoice === computerChoice
 }
 
-function checkResult(gameObject) {
+function processDraw(gameObject) {
+  var proxyObject = {...gameObject};
+  proxyObject.lastResult = "draw";
+  proxyObject.subHeading = "😞 It's a Draw! 😞"
+  gameObject = proxyObject;
+  return gameObject;
+}
+
+function processWin(gameObject) {
+  var proxyObject = {...gameObject};
+  proxyObject.lastResult = "win";
+  proxyObject.players[0].wins++;
+  proxyObject.subHeading = `${proxyObject.players[0].avatar.toString()} You won this round! ${proxyObject.players[0].avatar.toString()}`
+  gameObject = proxyObject;
+  return gameObject;
+}
+
+function processLoss(gameObject) {
+  var proxyObject = {...gameObject};
+  proxyObject.lastResult = "loss";
+  proxyObject.players[1].wins++;
+  proxyObject.subHeading = `${proxyObject.players[1].avatar} Computer won this round! ${proxyObject.players[1].avatar}`
+  gameObject = proxyObject;
+  return gameObject;
+}
+
+function processResult(gameObject) {
   if(checkDraw(gameObject)) {
-    return `It's a draw`;
+    gameObject = processDraw(gameObject);
+  } else if (checkPlayerWin(gameObject)) {
+    console.log("player win")
+    gameObject = processWin(gameObject);
   } else {
-    return checkPlayerWin(gameObject);
-  };
+    console.log("player loss")
+    gameObject = processLoss(gameObject);
+  }
+  return gameObject;
 }
 
 //DOM functions
-function renderSubHeading(dom, variable) {
+function renderTextToElement(variable, dom) {
   dom.innerText = variable;
 }
 
-function renderPlayer(playerObject, domIcon, domName, domScore) {
+function renderPlayer(playerObject, domIcon, domName) {
   domIcon.innerText = playerObject.avatar;
   domName.innerText = playerObject.name;
-  domScore.innerText = `Wins: ${playerObject.wins}`;
 }
 
 function createSingleHTML(fighter, gameObject) {
