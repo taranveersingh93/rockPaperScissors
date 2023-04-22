@@ -37,6 +37,18 @@ var timerID;
 // event listeners
 userID.addEventListener("keyup", allowSubmit);
 formSubmitBtn.addEventListener("click", fetchUserData);
+classicContainer.addEventListener("mouseover", function(event) {
+  showRules(event);
+});
+classicContainer.addEventListener("mouseout", function(event) {
+  collapseRules(event);
+});
+difficultContainer.addEventListener("mouseover", function(event) {
+  showRules(event);
+});
+difficultContainer.addEventListener("mouseout", function(event) {
+  collapseRules(event);
+});
 classicContainer.addEventListener("click", setClassicLogic);
 difficultContainer.addEventListener("click", setDifficultLogic);
 domFighters.addEventListener("mouseover", function(event) {
@@ -79,6 +91,50 @@ function reloadFighterSelection() {
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
+}
+
+function showRules(event) {
+  var classicRulesDiv = classicContainer.querySelector(".game-rules");
+  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
+
+  if(event.target.closest(".game-card").classList.contains("classic-container")) {
+    var rules = classicRulesDiv.querySelectorAll("h4");
+    classicRulesDiv.classList.add("visible-classic");
+    for (var i = 0; i < rules.length; i++) {
+      rules[i].classList.add("visible");
+    }
+    // classicContainer.querySelector(".game-rules").querySelector("h4").classList.add("visible");
+  } 
+  else if(event.target.closest(".game-card").classList.contains("difficult-container")) {
+    var rules = difficultRulesDiv.querySelectorAll("h4");
+    difficultRulesDiv.classList.add("visible-difficult");
+    for (var i = 0; i < rules.length; i++) {
+      rules[i].classList.add("visible");
+    }
+    // difficultContainer.querySelector(".game-rules").querySelector("h4").classList.add("visible");
+  }
+
+}
+
+function collapseRules(event) {
+  var classicRulesDiv = classicContainer.querySelector(".game-rules");
+  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
+
+  if(event.target.closest(".game-card").classList.contains("classic-container")) {
+    var rules = classicRulesDiv.querySelectorAll("h4");
+    for (var i = 0; i < rules.length; i++) {
+      classicRulesDiv.querySelector("h4").classList.remove("visible");
+    }
+    classicRulesDiv.classList.remove("visible-classic");
+  } 
+
+  if(event.target.closest(".game-card").classList.contains("difficult-container")) {
+    var rules = difficultRulesDiv.querySelectorAll("h4");
+    for (var i = 0; i < rules.length; i++) {
+      difficultRulesDiv.querySelector("h4").classList.remove("visible");
+    }
+    difficultRulesDiv.classList.remove("visible-difficult");
+  } 
 }
 
 function setClassicLogic() {
