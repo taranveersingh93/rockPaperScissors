@@ -11,6 +11,8 @@ var userInputView = document.querySelector(".user-input-view");
 var gameChoiceView = document.querySelector(".game-choice-view");
 var chooseFighterView = document.querySelector(".choose-fighter-view");
 var resultView = document.querySelector(".result-view");
+var gameViewBtn = document.querySelector(".reload-game-view");
+var gameViewSec = document.querySelector(".reload-game-view");
 var gameChoiceTitle = document.querySelector(".game-choice-title");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
 var classicContainer = document.querySelector(".classic-container");
@@ -49,6 +51,9 @@ domFighters.addEventListener("click", function(event) {
 domResultFighters.addEventListener("click", function(event) {
   displayResult(event);
 });
+gameViewBtn.addEventListener("click", function() {
+  reloadGameSelection();
+})
 
 // orchestrating functions
 function fetchUserData() {
@@ -62,6 +67,7 @@ function fetchUserData() {
 
 function reloadGameSelection() {
   toggleView(chooseFighterView, gameChoiceView);
+  hideDomElement(gameViewSec);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
 }
@@ -69,6 +75,7 @@ function reloadGameSelection() {
 function reloadFighterSelection() {
   clearTimeout(timerID);
   toggleView(resultView, chooseFighterView);
+  showDomElement(gameViewSec);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
@@ -78,6 +85,7 @@ function setClassicLogic() {
   game.logic = createClassicGame(game.logic);
   game.fighters = setFighters(game);
   toggleView(gameChoiceView, chooseFighterView);
+  showDomElement(gameViewSec);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
@@ -87,6 +95,7 @@ function setDifficultLogic() {
   game.logic = createDifficultGame(game.logic);
   game.fighters = setFighters(game);
   toggleView(gameChoiceView, chooseFighterView);
+  showDomElement(gameViewSec);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
@@ -102,6 +111,7 @@ function setPlayerChoice(event) {
     game = assignChoice(event, game);
     game = compChoose(game)
     toggleView(chooseFighterView, resultView);
+    showDomElement(gameViewSec);
     game.subHeading = changeSubHeading();
     renderTextToElement(game.subHeading, domSubHeading);
     renderResultPage();
