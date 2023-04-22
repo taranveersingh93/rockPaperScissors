@@ -82,12 +82,14 @@ function showFighters(gameObject) {
 }
 
 function setPlayerChoice(event) {
-  game = assignChoice(event, game);
-  game = compChoose(game)
-  toggleView(chooseFighterView, resultView);
-  game.subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, game.subHeading);
-  renderResultPage()
+  if (event.target.classList.contains("single-fighter")) {
+    game = assignChoice(event, game);
+    game = compChoose(game)
+    toggleView(chooseFighterView, resultView);
+    game.subHeading = changeSubHeading();
+    renderSubHeading(domSubHeading, game.subHeading);
+    renderResultPage();
+  }
 }
 
 function renderScore() {
