@@ -93,7 +93,22 @@ function displayResult(event) {
     var domRevealCard = document.querySelector(".result-unknown");
     var domComputerCard = document.querySelector(".comp-card");
     toggleView(domRevealCard, domComputerCard);
+    setTimeout(announceResult, 1000);
+  }
+}
 
+function announceResult() {
+  var playerCard = document.querySelector(".human-card");
+  var computerCard = document.querySelector(".comp-card");
+  if(checkResult(game) === "It's a draw") {
+    playerCard.classList.add("loser");
+    computerCard.classList.add("loser");
+  } else if (checkResult(game)) {
+    playerCard.classList.add("winner");
+    computerCard.classList.add("loser");
+  } else {
+    playerCard.classList.add("loser");
+    computerCard.classList.add("winner");
   }
 }
 
@@ -182,35 +197,36 @@ function addToWins(playerObject) {
   return playerObject
 }
 
-function checkWinner(playerChoice, computerChoice, logicObject) {
+function checkPlayerWin(gameObject) {
   var winFound = false;
-
-  for (var i = 0; i < logicObject[playerChoice].length; i++) {
-    if(logicObject[playerChoice][i] === computerChoice) {
+  var playerChoice = gameObject.players[0].choice;
+  var computerChoice = gameObject.players[1].choice;
+  for (var i = 0; i < gameObject.logic[playerChoice].length; i++) {
+    if(gameObject.logic[playerChoice][i] === computerChoice) {
       winFound = true;
     }
   }
-
-  if (winFound) {
-    humanPlayer = addToWins(humanPlayer);
-    return `Player won`
-  } else {
-    computerPlayer = addToWins(computerPlayer);
-    return `Computer won`
-  }
+  return winFound;
+  // if (winFound) {
+  //   humanPlayer = addToWins(humanPlayer);
+  //   return `Player won`
+  // } else {
+  //   computerPlayer = addToWins(computerPlayer);
+  //   return `Computer won`
+  // }
 }
 
-function checkDraw(playerChoice, computerChoice) {
+function checkDraw(gameObject) {
+  var playerChoice = gameObject.players[0].choice;
+  var computerChoice = gameObject.players[1].choice;
   return playerChoice === computerChoice
 }
 
-function checkResult(yourChoice, logicObject) {
-  var computerChoice = compChoose(logicObject);
-
-  if(checkDraw(yourChoice, computerChoice)) {
+function checkResult(gameObject) {
+  if(checkDraw(gameObject)) {
     return `It's a draw`;
   } else {
-    return checkWinner(yourChoice, computerChoice, logicObject);
+    return checkPlayerWin(gameObject);
   };
 }
 

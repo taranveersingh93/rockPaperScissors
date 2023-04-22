@@ -373,11 +373,13 @@ h4 {
 .winner {
   transform: scale(1.1);
   border: green;
+  border-style: double;
 }
 
 .loser {
   border: maroon;
   transform: scale(0.9);
+  border-style: double;
 }
 
 .hidden {
