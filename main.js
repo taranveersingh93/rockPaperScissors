@@ -89,8 +89,11 @@ function setPlayerChoice(event) {
 }
 
 function displayResult(event) {
-  if(event.target.classList.contains("result-unkown")) {
-    toggleView(domRevealCard, domComputerCard);  
+  if(event.target.classList.contains("result-unknown")) {
+    var domRevealCard = document.querySelector(".result-unknown");
+    var domComputerCard = document.querySelector(".comp-card");
+    toggleView(domRevealCard, domComputerCard);
+
   }
 }
 
@@ -282,7 +285,7 @@ function hideBeatCard(event) {
 function createShowdownHTML(gameObject) {
   var htmlCode = 
   `
-  <div class="result-card">
+  <div class="result-card human-card">
     <img class="result-single-fighter" src="assets/${gameObject.players[0].choice}.png">
   </div>
   <div class="result-unknown">
