@@ -30,6 +30,7 @@ var game = {
   fighters: [],
   lastResult: ""
 };
+var timerID;
 
 // event listeners
 userID.addEventListener("keyup", allowSubmit);
@@ -66,6 +67,7 @@ function reloadGameSelection() {
 }
 
 function reloadFighterSelection() {
+  clearTimeout(timerID);
   toggleView(resultView, chooseFighterView);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
@@ -140,7 +142,7 @@ function announceResult() {
   } else {
     renderLoss(humanCard, computerCard);
   }
-  setTimeout(reloadFighterSelection, 4000);
+  timerID = setTimeout(reloadFighterSelection, 4000);
 }
 
 function displayResult(event) {
