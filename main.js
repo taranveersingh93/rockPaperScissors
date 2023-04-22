@@ -11,6 +11,8 @@ var userInputView = document.querySelector(".user-input-view");
 var gameChoiceView = document.querySelector(".game-choice-view");
 var chooseFighterView = document.querySelector(".choose-fighter-view");
 var resultView = document.querySelector(".result-view");
+var gameViewBtn = document.querySelector(".reload-game-view");
+var gameViewSec = document.querySelector(".reload-game-view");
 var gameChoiceTitle = document.querySelector(".game-choice-title");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
 var classicContainer = document.querySelector(".classic-container");
@@ -30,6 +32,7 @@ var game = {
   fighters: [],
   lastResult: ""
 };
+var timerID;
 
 // event listeners
 userID.addEventListener("keyup", allowSubmit);
@@ -48,6 +51,9 @@ domFighters.addEventListener("click", function(event) {
 domResultFighters.addEventListener("click", function(event) {
   displayResult(event);
 });
+gameViewBtn.addEventListener("click", function() {
+  reloadGameSelection();
+})
 
 // orchestrating functions
 function fetchUserData() {
@@ -59,10 +65,27 @@ function fetchUserData() {
   renderTextToElement(game.subHeading, domSubHeading);
 }
 
+function reloadGameSelection() {
+  toggleView(chooseFighterView, gameChoiceView);
+  hideDomElement(gameViewSec);
+  game.subHeading = changeSubHeading();
+  renderTextToElement(game.subHeading, domSubHeading);
+}
+
+function reloadFighterSelection() {
+  clearTimeout(timerID);
+  toggleView(resultView, chooseFighterView);
+  showDomElement(gameViewSec);
+  game.subHeading = changeSubHeading();
+  renderTextToElement(game.subHeading, domSubHeading);
+  showFighters(game);
+}
+
 function setClassicLogic() {
   game.logic = createClassicGame(game.logic);
   game.fighters = setFighters(game);
   toggleView(gameChoiceView, chooseFighterView);
+  showDomElement(gameViewSec);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
@@ -72,6 +95,7 @@ function setDifficultLogic() {
   game.logic = createDifficultGame(game.logic);
   game.fighters = setFighters(game);
   toggleView(gameChoiceView, chooseFighterView);
+  showDomElement(gameViewSec);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
@@ -87,6 +111,7 @@ function setPlayerChoice(event) {
     game = assignChoice(event, game);
     game = compChoose(game)
     toggleView(chooseFighterView, resultView);
+    showDomElement(gameViewSec);
     game.subHeading = changeSubHeading();
     renderTextToElement(game.subHeading, domSubHeading);
     renderResultPage();
@@ -119,7 +144,6 @@ function renderLoss(userCard, compCard) {
 function announceResult() {
   var humanCard = document.querySelector(".human-card");
   var computerCard = document.querySelector(".comp-card");
-  game = processResult(game);
   renderTextToElement(game.subHeading, domSubHeading);
   if(game.lastResult === "draw") {
     renderDraw(humanCard, computerCard);
@@ -128,6 +152,7 @@ function announceResult() {
   } else {
     renderLoss(humanCard, computerCard);
   }
+  timerID = setTimeout(reloadFighterSelection, 4000);
 }
 
 function displayResult(event) {
@@ -135,7 +160,10 @@ function displayResult(event) {
     var domRevealCard = document.querySelector(".result-unknown");
     var domComputerCard = document.querySelector(".comp-card");
     toggleView(domRevealCard, domComputerCard);
+    game = processResult(game);
     setTimeout(announceResult, 300);
+  } else if (event.target.classList.contains("result-card") || event.target.classList.contains("result-single-fighter")) {
+    reloadFighterSelection();
   }
 }
 
