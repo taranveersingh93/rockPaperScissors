@@ -68,8 +68,13 @@ gameViewBtn.addEventListener("click", function() {
 })
 
 // orchestrating functions
+function assignCase(name) {
+  return name[0].toUpperCase() + name.slice(1);
+}
+
 function fetchUserData() {
-  game.players[0] = createPlayer(userID.value, userAvatar.value, 0);
+  var userName = assignCase(userID.value);
+  game.players[0] = createPlayer(userName, userAvatar.value, 0);
   renderPlayer(game.players[0], domPlayerIcon, domPlayerName);
   renderScore();
   toggleView(userInputView, gameChoiceView);
