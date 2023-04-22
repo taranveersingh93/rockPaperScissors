@@ -16,6 +16,8 @@ var classicContainer = document.querySelector(".classic-container");
 var difficultContainer = document.querySelector(".difficult-container");
 var domSubHeading = document.querySelector("h2");
 var domFighters = document.querySelector(".all-fighters");
+var domResultFighters = document.querySelector(".both-fighters");
+
 
 
 //Global variables
@@ -41,12 +43,15 @@ domFighters.addEventListener("mouseout", function(event) {
 domFighters.addEventListener("click", function(event) {
   setPlayerChoice(event);
 });
+domResultFighters.addEventListener("click", function(event) {
+  displayResult(event);
+});
 
 // orchestrating functions
 function fetchUserData() {
   game.players[0] = createPlayer(userID.value, userAvatar.value, 0);
   renderPlayer(game.players[0], domPlayerIcon, domPlayerName, domPlayerScore);
-  toggleView([userInputView], [gameChoiceView]);
+  toggleView(userInputView, gameChoiceView);
   game.subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, game.subHeading);
 }
@@ -54,7 +59,7 @@ function fetchUserData() {
 function setClassicLogic() {
   game.logic = createClassicGame(game.logic);
   game.fighters = setFighters(game);
-  toggleView([gameChoiceView], [chooseFighterView]);
+  toggleView(gameChoiceView, chooseFighterView);
   game.subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, game.subHeading);
   showFighters(game);
@@ -63,21 +68,48 @@ function setClassicLogic() {
 function setDifficultLogic() {
   game.logic = createDifficultGame(game.logic);
   game.fighters = setFighters(game);
-  toggleView([gameChoiceView], [chooseFighterView]);
+  toggleView(gameChoiceView, chooseFighterView);
   game.subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, game.subHeading);
   showFighters(game);
 }
 
 function showFighters(gameObject) {
-  createAllHTML(gameObject);
+  createAllFighterHTML(gameObject);
   renderFighters(gameObject);
 }
 
 function setPlayerChoice(event) {
-  game.players[0] = assignChoice(event, game.players[0]);
+  game = assignChoice(event, game);
+  game = compChoose(game)
+  toggleView(chooseFighterView, resultView);
   game.subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, game.subHeading);
+  renderResultPage()
+}
+
+function displayResult(event) {
+  if(event.target.classList.contains("result-unknown")) {
+    var domRevealCard = document.querySelector(".result-unknown");
+    var domComputerCard = document.querySelector(".comp-card");
+    toggleView(domRevealCard, domComputerCard);
+    setTimeout(announceResult, 1000);
+  }
+}
+
+function announceResult() {
+  var playerCard = document.querySelector(".human-card");
+  var computerCard = document.querySelector(".comp-card");
+  if(checkResult(game) === "It's a draw") {
+    playerCard.classList.add("loser");
+    computerCard.classList.add("loser");
+  } else if (checkResult(game)) {
+    playerCard.classList.add("winner");
+    computerCard.classList.add("loser");
+  } else {
+    playerCard.classList.add("loser");
+    computerCard.classList.add("winner");
+  }
 }
 
 // Data model functions 
@@ -89,7 +121,7 @@ function changeSubHeading() {
   } else if (!chooseFighterView.classList.contains("hidden")) {
     return "Choose your fighter";
   } else if (!resultView.classList.contains("hidden")) {
-    return "Verdict is out!";
+    return "Reveal computer's choice!";
   }
 }
 
@@ -143,11 +175,19 @@ function setFighters(gameObject) {
   return Object.keys(gameObject.logic);
 }
 
-function assignChoice(event, playerObject) {
-  var proxyPlayer = {...playerObject};
-  proxyPlayer.choice = event.target.id;
-  playerObject = proxyPlayer;
-  return playerObject;
+function assignChoice(event, gameObject) {
+  var proxyGame = {...gameObject};
+  proxyGame.players[0].choice = event.target.id;
+  gameObject = proxyGame;
+  return gameObject;
+}
+
+function compChoose(gameObject) {
+  var proxyGame = {...gameObject};
+  var randomFighter = proxyGame.fighters[getRandomIndex(proxyGame.fighters)];
+  proxyGame.players[1].choice = randomFighter;
+  gameObject = proxyGame;
+  return gameObject;
 }
 
 function addToWins(playerObject) {
@@ -157,39 +197,36 @@ function addToWins(playerObject) {
   return playerObject
 }
 
-function compChoose(logicObject, fighters) {
-  return fighters[getRandomIndex(fighters)];
-}
-
-function checkWinner(playerChoice, computerChoice, logicObject) {
+function checkPlayerWin(gameObject) {
   var winFound = false;
-
-  for (var i = 0; i < logicObject[playerChoice].length; i++) {
-    if(logicObject[playerChoice][i] === computerChoice) {
+  var playerChoice = gameObject.players[0].choice;
+  var computerChoice = gameObject.players[1].choice;
+  for (var i = 0; i < gameObject.logic[playerChoice].length; i++) {
+    if(gameObject.logic[playerChoice][i] === computerChoice) {
       winFound = true;
     }
   }
-
-  if (winFound) {
-    humanPlayer = addToWins(humanPlayer);
-    return `Player won`
-  } else {
-    computerPlayer = addToWins(computerPlayer);
-    return `Computer won`
-  }
+  return winFound;
+  // if (winFound) {
+  //   humanPlayer = addToWins(humanPlayer);
+  //   return `Player won`
+  // } else {
+  //   computerPlayer = addToWins(computerPlayer);
+  //   return `Computer won`
+  // }
 }
 
-function checkDraw(playerChoice, computerChoice) {
+function checkDraw(gameObject) {
+  var playerChoice = gameObject.players[0].choice;
+  var computerChoice = gameObject.players[1].choice;
   return playerChoice === computerChoice
 }
 
-function checkResult(yourChoice, logicObject) {
-  var computerChoice = compChoose(logicObject);
-
-  if(checkDraw(yourChoice, computerChoice)) {
+function checkResult(gameObject) {
+  if(checkDraw(gameObject)) {
     return `It's a draw`;
   } else {
-    return checkWinner(yourChoice, computerChoice, logicObject);
+    return checkPlayerWin(gameObject);
   };
 }
 
@@ -231,7 +268,7 @@ function createSingleHTML(fighter, gameObject) {
   return htmlCode;
 } 
 
-function createAllHTML(gameObject) {
+function createAllFighterHTML(gameObject) {
   var htmlCode = "";
   for (var i = 0; i < gameObject.fighters.length; i++) {
     htmlCode += createSingleHTML(gameObject.fighters[i], gameObject);
@@ -240,7 +277,7 @@ function createAllHTML(gameObject) {
 }
 
 function renderFighters(gameObject) {
-  domFighters.innerHTML = createAllHTML(gameObject);
+  domFighters.innerHTML = createAllFighterHTML(gameObject);
 }
 
 function showBeatCard(event) {
@@ -261,6 +298,25 @@ function hideBeatCard(event) {
   }
 }
 
+function createShowdownHTML(gameObject) {
+  var htmlCode = 
+  `
+  <div class="result-card human-card">
+    <img class="result-single-fighter" src="assets/${gameObject.players[0].choice}.png">
+  </div>
+  <div class="result-unknown">
+    Click to reveal
+  </div>
+  <div class="result-card comp-card hidden">
+    <img class="result-single-fighter" src="assets/${gameObject.players[1].choice}.png">
+  </div>
+  `;
+  return htmlCode;
+}
+
+function renderResultPage() {
+  domResultFighters.innerHTML = createShowdownHTML(game);
+}
 function hideDomElement(element) {
   element.classList.add("hidden");
 }
@@ -269,12 +325,8 @@ function showDomElement(element) {
   element.classList.remove("hidden");
 }
 
-function toggleView(fromViews, toViews) {
-  for (var i = 0; i < fromViews.length; i++) {
-    hideDomElement(fromViews[i]);
-  }
-  for (var i = 0; i < toViews.length; i++) {
-    showDomElement(toViews[i]);
-  }
+function toggleView(fromView, toView) {
+  hideDomElement(fromView);
+  showDomElement(toView);
 }
 

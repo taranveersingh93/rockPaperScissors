@@ -252,10 +252,6 @@ h4 {
   height: 20px;
 }
 
-.hidden {
-  display: none ;
-}
-
 /* choose fighter */
 .choose-fighter-view {
   display: flex;
@@ -317,4 +313,75 @@ h4 {
 
 .beat-fighter {
   height: 70px;
+}
+
+/* result page */
+.result-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70%;
+}
+
+.both-fighters {
+  display: flex;
+  justify-content: space-around;
+  width: 90%;
+}
+
+.result-single-fighter {
+  height: 300px;
+}
+
+.result-card {
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  border-style: double;
+  border: white;
+  height: 350px;
+  width: 350px;
+  transition: all 2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-card:hover {
+  background-color: rgba(255,255,255,0.5);
+  cursor: pointer;
+}
+
+.result-unknown {
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  height: 350px;
+  width: 350px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.4);
+  transform: all 1s ease;
+}
+
+.result-unknown:hover {
+  background-color: rgba(255,255,255,0.5);
+  color: white;
+  cursor: pointer;
+}
+
+.winner {
+  transform: scale(1.1);
+  border: green;
+  border-style: double;
+}
+
+.loser {
+  border: maroon;
+  transform: scale(0.9);
+  border-style: double;
+}
+
+.hidden {
+  display: none ;
 }
