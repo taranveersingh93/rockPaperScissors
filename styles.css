@@ -100,6 +100,7 @@ h2 {
   background-color: white;
   color: #201E50;
   cursor: pointer;
+  transform: scale(1.1);
 }
 
 /* user form */
@@ -197,22 +198,21 @@ form {
   cursor: pointer;
 }
 
+/* game choice */
+
 .game-choice-view {
-  height: 100%;
+  height: 70%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
-
-
-
-/* game choice */
 
 .game-choice-container {
   display: flex;
   flex-direction: column;
   width: 60%;
-  height: 60%;
+  height: 40%;
   align-items: center;
   justify-content: space-evenly;
 }
@@ -258,7 +258,6 @@ form {
   height: 1px;
   opacity: 0;
   transition: all 1.5s ease;
-
 }
 
 .visible-classic {
@@ -282,6 +281,14 @@ h4 {
   margin-top: 0;
   margin-bottom: 0;
   font-weight: 100;
+  visibility: 0;
+  transition: all 2s ease;
+  height: 0;
+}
+
+.visible {
+  height: 22px;
+  opacity: 1;
 }
 
 .title-icon {
