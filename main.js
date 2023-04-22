@@ -25,7 +25,7 @@ var domResultFighters = document.querySelector(".both-fighters");
 
 var game = {
   logic: {},
-  players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "&#x1F4BB;", 0)],
+  players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "💻", 0)],
   subHeading: changeSubHeading(),
   fighters: [],
   lastResult: ""
@@ -56,7 +56,7 @@ function fetchUserData() {
   renderScore();
   toggleView(userInputView, gameChoiceView);
   game.subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, game.subHeading);
+  renderTextToElement(game.subHeading, domSubHeading);
 }
 
 function setClassicLogic() {
@@ -64,7 +64,7 @@ function setClassicLogic() {
   game.fighters = setFighters(game);
   toggleView(gameChoiceView, chooseFighterView);
   game.subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, game.subHeading);
+  renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
 }
 
@@ -73,7 +73,7 @@ function setDifficultLogic() {
   game.fighters = setFighters(game);
   toggleView(gameChoiceView, chooseFighterView);
   game.subHeading = changeSubHeading();
-  renderSubHeading(domSubHeading, game.subHeading);
+  renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
 }
 
@@ -88,7 +88,7 @@ function setPlayerChoice(event) {
     game = compChoose(game)
     toggleView(chooseFighterView, resultView);
     game.subHeading = changeSubHeading();
-    renderSubHeading(domSubHeading, game.subHeading);
+    renderTextToElement(game.subHeading, domSubHeading);
     renderResultPage();
   }
 }
@@ -120,6 +120,7 @@ function announceResult() {
   var humanCard = document.querySelector(".human-card");
   var computerCard = document.querySelector(".comp-card");
   game = processResult(game);
+  renderTextToElement(game.subHeading, domSubHeading);
   if(game.lastResult === "draw") {
     renderDraw(humanCard, computerCard);
   } else if (game.lastResult === "win") {
@@ -246,6 +247,7 @@ function checkDraw(gameObject) {
 function processDraw(gameObject) {
   var proxyObject = {...gameObject};
   proxyObject.lastResult = "draw";
+  proxyObject.subHeading = "😞 It's a Draw! 😞"
   gameObject = proxyObject;
   return gameObject;
 }
@@ -254,6 +256,7 @@ function processWin(gameObject) {
   var proxyObject = {...gameObject};
   proxyObject.lastResult = "win";
   proxyObject.players[0].wins++;
+  proxyObject.subHeading = `${proxyObject.players[0].avatar.toString()} You won this round! ${proxyObject.players[0].avatar.toString()}`
   gameObject = proxyObject;
   return gameObject;
 }
@@ -262,6 +265,7 @@ function processLoss(gameObject) {
   var proxyObject = {...gameObject};
   proxyObject.lastResult = "loss";
   proxyObject.players[1].wins++;
+  proxyObject.subHeading = `${proxyObject.players[1].avatar} Computer won this round! ${proxyObject.players[1].avatar}`
   gameObject = proxyObject;
   return gameObject;
 }
@@ -280,7 +284,7 @@ function processResult(gameObject) {
 }
 
 //DOM functions
-function renderSubHeading(dom, variable) {
+function renderTextToElement(variable, dom) {
   dom.innerText = variable;
 }
 
