@@ -52,7 +52,8 @@ domResultFighters.addEventListener("click", function(event) {
 // orchestrating functions
 function fetchUserData() {
   game.players[0] = createPlayer(userID.value, userAvatar.value, 0);
-  renderPlayer(game.players[0], domPlayerIcon, domPlayerName, domPlayerScore);
+  renderPlayer(game.players[0], domPlayerIcon, domPlayerName);
+  renderScore();
   toggleView(userInputView, gameChoiceView);
   game.subHeading = changeSubHeading();
   renderSubHeading(domSubHeading, game.subHeading);
@@ -93,8 +94,8 @@ function setPlayerChoice(event) {
 }
 
 function renderScore() {
-  domPlayerScore.innerText = game.players[0].wins;
-  domComputerScore.innerText = game.players[1].wins;
+  domPlayerScore.innerText = `Wins: ${game.players[0].wins}`;
+  domComputerScore.innerText = `Wins: ${game.players[1].wins}`;
 }
 
 function renderDraw(userCard, compCard) {
@@ -283,10 +284,9 @@ function renderSubHeading(dom, variable) {
   dom.innerText = variable;
 }
 
-function renderPlayer(playerObject, domIcon, domName, domScore) {
+function renderPlayer(playerObject, domIcon, domName) {
   domIcon.innerText = playerObject.avatar;
   domName.innerText = playerObject.name;
-  domScore.innerText = `Wins: ${playerObject.wins}`;
 }
 
 function createSingleHTML(fighter, gameObject) {
