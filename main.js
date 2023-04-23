@@ -1,56 +1,54 @@
 // query selectors
-var userID = document.querySelector("#user-name");
-var userAvatar = document.querySelector("#avatar");
-var formSubmitBtn = document.querySelector(".form-submit-btn");
-var formNewSubmitBtn = document.querySelector(".form-new-submit-btn");
+// constant elements
 var domPlayerIcon = document.querySelector(".player-icon");
 var domPlayerName = document.querySelector(".player-name");
 var domPlayerScore = document.querySelector(".human-score");
 var domComputerScore = document.querySelector(".computer-score");
+var domSubHeading = document.querySelector("h2");
+
+// user input view
 var userInputView = document.querySelector(".user-input-view");
+var domUserID = document.querySelector("#user-name");
+var domUserAvatar = document.querySelector("#avatar");
+var domSubmitBtn = document.querySelector(".form-submit-btn");
+
+// game choice view
 var gameChoiceView = document.querySelector(".game-choice-view");
-var chooseFighterView = document.querySelector(".choose-fighter-view");
-var resultView = document.querySelector(".result-view");
-var gameViewBtn = document.querySelector(".reload-game-view");
-var gameViewSec = document.querySelector(".reload-game-view");
-var gameChoiceTitle = document.querySelector(".game-choice-title");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
+var gameViewBtn = document.querySelector(".reload-game-view");
 var classicContainer = document.querySelector(".classic-container");
 var difficultContainer = document.querySelector(".difficult-container");
-var domSubHeading = document.querySelector("h2");
+
+// choose fighters view
+var chooseFighterView = document.querySelector(".choose-fighter-view");
 var domFighters = document.querySelector(".all-fighters");
 var domResultFighters = document.querySelector(".both-fighters");
 
-
+// result view
+var resultView = document.querySelector(".result-view");
 
 //Global variables
-
-var game = {
-  logic: {},
-  players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "💻", 0)],
-  subHeading: changeSubHeading(),
-  fighters: [],
-  lastResult: ""
-};
+var game = createFirstGame();
 var timerID;
 
 // event listeners
-userID.addEventListener("keyup", allowSubmit);
-formSubmitBtn.addEventListener("click", fetchUserData);
-classicContainer.addEventListener("mouseover", function(event) {
-  showRules(event);
+domUserID.addEventListener("keyup", allowSubmit);
+domSubmitBtn.addEventListener("click", function() {
+  setUserData();
+  chooseGame();
 });
-classicContainer.addEventListener("mouseout", function(event) {
-  collapseRules(event);
+gameChoiceContainer.addEventListener("mouseover", function(event) {
+    showRules(event);
 });
-difficultContainer.addEventListener("mouseover", function(event) {
-  showRules(event);
+gameChoiceContainer.addEventListener("mouseout", function(event) {
+    collapseRules(event);
 });
-difficultContainer.addEventListener("mouseout", function(event) {
-  collapseRules(event);
+gameChoiceContainer.addEventListener("click", function(event) {
+  if(event.target.classList) {
+    game = setGameData(event, game);
+    showGameBoard();
+  }
 });
-classicContainer.addEventListener("click", setClassicLogic);
-difficultContainer.addEventListener("click", setDifficultLogic);
 domFighters.addEventListener("mouseover", function(event) {
   showBeatCard(event);
 });
@@ -61,103 +59,43 @@ domFighters.addEventListener("click", function(event) {
   setPlayerChoice(event);
 });
 domResultFighters.addEventListener("click", function(event) {
-  displayResult(event);
+  fightOrFlight(event);
 });
 gameViewBtn.addEventListener("click", function() {
+  updateActiveView(game, "chooseGame");
   reloadGameSelection();
 })
 
 // orchestrating functions
-function assignCase(name) {
-  return name[0].toUpperCase() + name.slice(1);
+
+function setUserData() {
+  var userName = assignCase(domUserID.value);
+  game.players[0] = createPlayer(userName, domUserAvatar.value, 0);
+  updateActiveView(game, "chooseGame");
 }
 
-function fetchUserData() {
-  var userName = assignCase(userID.value);
-  game.players[0] = createPlayer(userName, userAvatar.value, 0);
+function chooseGame() {
   renderPlayer(game.players[0], domPlayerIcon, domPlayerName);
   renderScore();
-  toggleView(userInputView, gameChoiceView);
-  game.subHeading = changeSubHeading();
+  goToView(gameChoiceView);
   renderTextToElement(game.subHeading, domSubHeading);
 }
 
 function reloadGameSelection() {
-  toggleView(chooseFighterView, gameChoiceView);
-  hideDomElement(gameViewSec);
-  game.subHeading = changeSubHeading();
+  goToView(gameChoiceView);
+  hideDomElement(gameViewBtn);
   renderTextToElement(game.subHeading, domSubHeading);
 }
 
 function reloadFighterSelection() {
   clearTimeout(timerID);
-  toggleView(resultView, chooseFighterView);
-  showDomElement(gameViewSec);
-  game.subHeading = changeSubHeading();
-  renderTextToElement(game.subHeading, domSubHeading);
-  showFighters(game);
+  updateActiveView(game, "chooseFighter");
+  showGameBoard();
 }
 
-function showRules(event) {
-  var classicRulesDiv = classicContainer.querySelector(".game-rules");
-  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
-
-  if(event.target.closest(".game-card").classList.contains("classic-container")) {
-    var rules = classicRulesDiv.querySelectorAll("h4");
-    classicRulesDiv.classList.add("visible-classic");
-    for (var i = 0; i < rules.length; i++) {
-      rules[i].classList.add("visible");
-    }
-    // classicContainer.querySelector(".game-rules").querySelector("h4").classList.add("visible");
-  } 
-  else if(event.target.closest(".game-card").classList.contains("difficult-container")) {
-    var rules = difficultRulesDiv.querySelectorAll("h4");
-    difficultRulesDiv.classList.add("visible-difficult");
-    for (var i = 0; i < rules.length; i++) {
-      rules[i].classList.add("visible");
-    }
-    // difficultContainer.querySelector(".game-rules").querySelector("h4").classList.add("visible");
-  }
-
-}
-
-function collapseRules(event) {
-  var classicRulesDiv = classicContainer.querySelector(".game-rules");
-  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
-
-  if(event.target.closest(".game-card").classList.contains("classic-container")) {
-    var rules = classicRulesDiv.querySelectorAll("h4");
-    for (var i = 0; i < rules.length; i++) {
-      classicRulesDiv.querySelector("h4").classList.remove("visible");
-    }
-    classicRulesDiv.classList.remove("visible-classic");
-  } 
-
-  if(event.target.closest(".game-card").classList.contains("difficult-container")) {
-    var rules = difficultRulesDiv.querySelectorAll("h4");
-    for (var i = 0; i < rules.length; i++) {
-      difficultRulesDiv.querySelector("h4").classList.remove("visible");
-    }
-    difficultRulesDiv.classList.remove("visible-difficult");
-  } 
-}
-
-function setClassicLogic() {
-  game.logic = createClassicGame(game.logic);
-  game.fighters = setFighters(game);
-  toggleView(gameChoiceView, chooseFighterView);
-  showDomElement(gameViewSec);
-  game.subHeading = changeSubHeading();
-  renderTextToElement(game.subHeading, domSubHeading);
-  showFighters(game);
-}
-
-function setDifficultLogic() {
-  game.logic = createDifficultGame(game.logic);
-  game.fighters = setFighters(game);
-  toggleView(gameChoiceView, chooseFighterView);
-  showDomElement(gameViewSec);
-  game.subHeading = changeSubHeading();
+function showGameBoard() {
+  goToView(chooseFighterView);
+  showDomElement(gameViewBtn);
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
 }
@@ -169,14 +107,22 @@ function showFighters(gameObject) {
 
 function setPlayerChoice(event) {
   if (event.target.classList.contains("single-fighter")) {
-    game = assignChoice(event, game);
-    game = compChoose(game)
-    toggleView(chooseFighterView, resultView);
-    showDomElement(gameViewSec);
-    game.subHeading = changeSubHeading();
-    renderTextToElement(game.subHeading, domSubHeading);
-    renderResultPage();
+    assignChoiceToGame(event)
+    goToReveal()
   }
+}
+
+function goToReveal() {
+  goToView(resultView);
+  showDomElement(gameViewBtn);
+  renderTextToElement(game.subHeading, domSubHeading);
+  renderResultPage();
+}
+
+function assignChoiceToGame(event) {
+  game = assignHumanChoice(event, game);
+  game = compChoose(game);
+  updateActiveView(game, "revealResult");
 }
 
 function renderScore() {
@@ -184,22 +130,19 @@ function renderScore() {
   domComputerScore.innerText = `Wins: ${game.players[1].wins}`;
 }
 
-function renderDraw(userCard, compCard) {
+function animateDraw(userCard, compCard) {
   userCard.classList.add("loser");
   compCard.classList.add("loser");
-  renderScore();
 }
 
-function renderWin(userCard, compCard) {
+function animateWin(userCard, compCard) {
   userCard.classList.add("winner");
   compCard.classList.add("loser");
-  renderScore();
 }
 
-function renderLoss(userCard, compCard) {
+function animateLoss(userCard, compCard) {
   userCard.classList.add("loser");
   compCard.classList.add("winner");
-  renderScore();
 }
 
 function announceResult() {
@@ -207,54 +150,40 @@ function announceResult() {
   var computerCard = document.querySelector(".comp-card");
   renderTextToElement(game.subHeading, domSubHeading);
   if(game.lastResult === "draw") {
-    renderDraw(humanCard, computerCard);
+    animateDraw(humanCard, computerCard);
   } else if (game.lastResult === "win") {
-    renderWin(humanCard, computerCard);
+    animateWin(humanCard, computerCard);
   } else {
-    renderLoss(humanCard, computerCard);
+    animateLoss(humanCard, computerCard);
   }
+  renderScore();
   timerID = setTimeout(reloadFighterSelection, 4000);
 }
 
-function displayResult(event) {
-  if(event.target.classList.contains("result-unknown")) {
-    var domRevealCard = document.querySelector(".result-unknown");
-    var domComputerCard = document.querySelector(".comp-card");
-    toggleView(domRevealCard, domComputerCard);
+function fightOrFlight(event) {
+  var cardIsClosed = event.target.classList.contains("result-unknown");
+  var cardIsOpen = event.target.classList.contains("result-card") || event.target.classList.contains("result-single-fighter");
+  if(cardIsClosed) {
     game = processResult(game);
-    setTimeout(announceResult, 300);
-  } else if (event.target.classList.contains("result-card") || event.target.classList.contains("result-single-fighter")) {
+    proceedToResult();
+  } else if (cardIsOpen) {
     reloadFighterSelection();
   }
 }
 
-
+function proceedToResult() {
+  var domRevealCard = document.querySelector(".result-unknown");
+  var domComputerCard = document.querySelector(".comp-card");
+  hideDomElement(domRevealCard);
+  showDomElement(domComputerCard);
+  setTimeout(announceResult, 300);
+}
 
 // Data model functions 
-function changeSubHeading() {
-  if (!userInputView.classList.contains("hidden")) {
-    return "Enter your details";
-  } else if (!gameChoiceView.classList.contains("hidden")) {
-    return "Select the game type";
-  } else if (!chooseFighterView.classList.contains("hidden")) {
-    return "Choose your fighter";
-  } else if (!resultView.classList.contains("hidden")) {
-    return "Reveal computer's choice!";
-  }
-}
 
-function getRandomIndex(array) {
-  return Math.floor(Math.random() * array.length);
-}
-
-function allowSubmit() {
-  if(userID.value) {
-    formSubmitBtn.disabled = false;
-    formSubmitBtn.classList.add("submit-btn-alt");
-  } else {
-    formSubmitBtn.disabled = true;
-    formSubmitBtn.classList.remove("submit-btn-alt");
-  }
+function updateActiveView(gameObject, view) {
+  gameObject.activeView = view;
+  gameObject.subHeading = changeSubHeading(gameObject);
 }
 
 function createPlayer(label, icon, score) {
@@ -267,33 +196,90 @@ function createPlayer(label, icon, score) {
   return player;
 }
 
-function createClassicGame(logicObject) {
-  var proxyLogic = {
-    scissors: ["paper"],
-    paper: ["rock"],
-    rock: ["scissors"]
-  };
-  logicObject = {...proxyLogic};
-  return logicObject;
-}
-
-function createDifficultGame(logicObject) {
-  var proxyLogic = {  
-    rock: ["scissors", "lizard"], 
-    scissors: ["paper", "lizard"], 
-    paper: ["rock", "alien"], 
-    lizard: ["paper", "alien"],
-    alien: ["scissors", "rock"] 
-  };
-  logicObject = {...proxyLogic};
-  return logicObject;
+function createFirstGame() {
+  var game = {
+    logic: {},
+    players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "💻", 0)],
+    fighters: [],
+    lastResult: "",
+    activeView: "userInput",
+    subHeading: "Enter your details"
+  }
+  return game;
 }
 
 function setFighters(gameObject) {
   return Object.keys(gameObject.logic);
 }
 
-function assignChoice(event, gameObject) {
+function generateClassicLogic() {
+  var classicLogic = {
+    scissors: ["paper"],
+    paper: ["rock"],
+    rock: ["scissors"]
+  };
+  return classicLogic
+}
+
+function generateDifficultLogic() {
+  var difficultLogic = {  
+    rock: ["scissors", "lizard"], 
+    scissors: ["paper", "lizard"], 
+    paper: ["rock", "alien"], 
+    lizard: ["paper", "alien"],
+    alien: ["scissors", "rock"] 
+  };
+  return difficultLogic;
+}
+
+function createGame (logic, gameObject) {
+  var proxyObject = {...gameObject};
+  if (logic === "classic") {
+    proxyObject.logic = generateClassicLogic();
+  } else {
+    proxyObject.logic = generateDifficultLogic();
+  }
+  proxyObject.fighters = setFighters(proxyObject);
+  
+  gameObject = proxyObject;
+  return gameObject;
+}
+
+function setGameData(event, gameObject) {
+  if (event.target.closest(".game-card")?.classList.contains("classic-container")) {
+    gameObject = createGame("classic", gameObject)
+  } else if (event.target.closest(".game-card")?.classList.contains("difficult-container")) {
+    gameObject = createGame("difficult", gameObject)
+  };
+  updateActiveView(gameObject, "chooseFighter");
+  return gameObject;
+}
+
+function changeSubHeading(gameObject) {
+  var subHeading = "";
+  if (gameObject.activeView === "userInput") {
+    subHeading = "Enter your details";
+  } else if (gameObject.activeView === "chooseGame") {
+    subHeading = "Select the game type";
+  } else if (gameObject.activeView === "chooseFighter") {
+    subHeading = "Choose your fighter";
+  } else if (gameObject.activeView === "revealResult") {
+    subHeading = "Reveal computer's choice!";
+  } else if (gameObject.activeView === "declareDraw") {
+    subHeading = "😞 It's a Draw! 😞"
+  } else if (gameObject.activeView === "declareLoss") {
+    subHeading = `${gameObject.players[1].avatar} Computer won this round! ${gameObject.players[1].avatar}`
+  } else {
+    subHeading = `${gameObject.players[0].avatar.toString()} You won this round! ${gameObject.players[0].avatar.toString()}`
+  } 
+  return subHeading;
+}
+
+function getRandomIndex(array) {
+  return Math.floor(Math.random() * array.length);
+}
+
+function assignHumanChoice(event, gameObject) {
   var proxyGame = {...gameObject};
   proxyGame.players[0].choice = event.target.id;
   gameObject = proxyGame;
@@ -336,7 +322,7 @@ function checkDraw(gameObject) {
 function processDraw(gameObject) {
   var proxyObject = {...gameObject};
   proxyObject.lastResult = "draw";
-  proxyObject.subHeading = "😞 It's a Draw! 😞"
+  updateActiveView(proxyObject, "declareDraw");
   gameObject = proxyObject;
   return gameObject;
 }
@@ -345,7 +331,7 @@ function processWin(gameObject) {
   var proxyObject = {...gameObject};
   proxyObject.lastResult = "win";
   proxyObject.players[0].wins++;
-  proxyObject.subHeading = `${proxyObject.players[0].avatar.toString()} You won this round! ${proxyObject.players[0].avatar.toString()}`
+  updateActiveView(proxyObject, "declareWin");
   gameObject = proxyObject;
   return gameObject;
 }
@@ -354,7 +340,7 @@ function processLoss(gameObject) {
   var proxyObject = {...gameObject};
   proxyObject.lastResult = "loss";
   proxyObject.players[1].wins++;
-  proxyObject.subHeading = `${proxyObject.players[1].avatar} Computer won this round! ${proxyObject.players[1].avatar}`
+  updateActiveView(proxyObject, "declareLoss");
   gameObject = proxyObject;
   return gameObject;
 }
@@ -363,10 +349,8 @@ function processResult(gameObject) {
   if(checkDraw(gameObject)) {
     gameObject = processDraw(gameObject);
   } else if (checkPlayerWin(gameObject)) {
-    console.log("player win")
     gameObject = processWin(gameObject);
   } else {
-    console.log("player loss")
     gameObject = processLoss(gameObject);
   }
   return gameObject;
@@ -375,6 +359,56 @@ function processResult(gameObject) {
 //DOM functions
 function renderTextToElement(variable, dom) {
   dom.innerText = variable;
+}
+
+function allowSubmit() {
+  if(domUserID.value) {
+    domSubmitBtn.disabled = false;
+    domSubmitBtn.classList.add("submit-btn-alt");
+  } else {
+    domSubmitBtn.disabled = true;
+    domSubmitBtn.classList.remove("submit-btn-alt");
+  }
+}
+
+function showRules(event) {
+  var classicRulesDiv = classicContainer.querySelector(".game-rules");
+  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
+
+  if(event.target.closest(".game-card")?.classList.contains("classic-container")) {
+    var rules = classicRulesDiv.querySelectorAll("h4");
+    classicRulesDiv.classList.add("visible-classic");
+    for (var i = 0; i < rules.length; i++) {
+      rules[i].classList.add("visible");
+    }
+  } else if(event.target.closest(".game-card")?.classList.contains("difficult-container")) {
+      var rules = difficultRulesDiv.querySelectorAll("h4");
+      difficultRulesDiv.classList.add("visible-difficult");
+      for (var i = 0; i < rules.length; i++) {
+        rules[i].classList.add("visible");
+      }
+    }
+}
+
+function collapseRules(event) {
+  var classicRulesDiv = classicContainer.querySelector(".game-rules");
+  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
+
+  if(event.target.closest(".game-card")?.classList.contains("classic-container")) {
+    var rules = classicRulesDiv.querySelectorAll("h4");
+    for (var i = 0; i < rules.length; i++) {
+      classicRulesDiv.querySelector("h4").classList.remove("visible");
+    }
+    classicRulesDiv.classList.remove("visible-classic");
+  } 
+
+  if(event.target.closest(".game-card")?.classList.contains("difficult-container")) {
+    var rules = difficultRulesDiv.querySelectorAll("h4");
+    for (var i = 0; i < rules.length; i++) {
+      difficultRulesDiv.querySelector("h4").classList.remove("visible");
+    }
+    difficultRulesDiv.classList.remove("visible-difficult");
+  } 
 }
 
 function renderPlayer(playerObject, domIcon, domName) {
@@ -466,8 +500,15 @@ function showDomElement(element) {
   element.classList.remove("hidden");
 }
 
-function toggleView(fromView, toView) {
-  hideDomElement(fromView);
+function assignCase(name) {
+  return name[0].toUpperCase() + name.slice(1);
+}
+
+function goToView(toView) {
+  hideDomElement(userInputView);
+  hideDomElement(gameChoiceView);
+  hideDomElement(chooseFighterView);
+  hideDomElement(resultView);
   showDomElement(toView);
 }
 
