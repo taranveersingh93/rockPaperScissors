@@ -27,13 +27,7 @@ var domResultFighters = document.querySelector(".both-fighters");
 var resultView = document.querySelector(".result-view");
 
 //Global variables
-var game = {
-  logic: {},
-  players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "💻", 0)],
-  subHeading: changeSubHeading(),
-  fighters: [],
-  lastResult: ""
-};
+var game = createFirstGame();
 var timerID;
 
 // event listeners
@@ -76,6 +70,7 @@ function assignCase(name) {
 
 function fetchUserData() {
   var userName = assignCase(domUserID.value);
+
   game.players[0] = createPlayer(userName, domUserAvatar.value, 0);
   renderPlayer(game.players[0], domPlayerIcon, domPlayerName);
   renderScore();
@@ -229,6 +224,17 @@ function displayResult(event) {
 
 
 // Data model functions 
+function createFirstGame() {
+  var game = {
+    logic: {},
+    players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "💻", 0)],
+    subHeading: changeSubHeading(),
+    fighters: [],
+    lastResult: ""
+  }
+  return game;
+}
+
 function changeSubHeading() {
   if (!userInputView.classList.contains("hidden")) {
     return "Enter your details";
@@ -245,15 +251,6 @@ function getRandomIndex(array) {
   return Math.floor(Math.random() * array.length);
 }
 
-function allowSubmit() {
-  if(domUserID.value) {
-    domSubmitBtn.disabled = false;
-    domSubmitBtn.classList.add("submit-btn-alt");
-  } else {
-    domSubmitBtn.disabled = true;
-    domSubmitBtn.classList.remove("submit-btn-alt");
-  }
-}
 
 function createPlayer(label, icon, score) {
   var player = {
@@ -373,6 +370,16 @@ function processResult(gameObject) {
 //DOM functions
 function renderTextToElement(variable, dom) {
   dom.innerText = variable;
+}
+
+function allowSubmit() {
+  if(domUserID.value) {
+    domSubmitBtn.disabled = false;
+    domSubmitBtn.classList.add("submit-btn-alt");
+  } else {
+    domSubmitBtn.disabled = true;
+    domSubmitBtn.classList.remove("submit-btn-alt");
+  }
 }
 
 function renderPlayer(playerObject, domIcon, domName) {
