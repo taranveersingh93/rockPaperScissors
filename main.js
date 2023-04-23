@@ -29,11 +29,15 @@ var resultView = document.querySelector(".result-view");
 
 //Global variables
 var game = createFirstGame();
+console.log(game)
 var timerID;
 
 // event listeners
 domUserID.addEventListener("keyup", allowSubmit);
-domSubmitBtn.addEventListener("click", fetchUserData);
+domSubmitBtn.addEventListener("click", function() {
+  setUserData();
+  chooseGame();
+});
 gameChoiceContainer.addEventListener("click", function(event) {
   if(event.target.classList) {
     game = setGameData(event, game);
@@ -41,15 +45,11 @@ gameChoiceContainer.addEventListener("click", function(event) {
   }
 });
 gameChoiceContainer.addEventListener("mouseover", function(event) {
-  if(event.target.classList) {
     showRules(event);
-  }
-})
+});
 gameChoiceContainer.addEventListener("mouseout", function(event) {
-  if(event.target.classList) {
     collapseRules(event);
-  }
-})
+});
 domFighters.addEventListener("mouseover", function(event) {
   showBeatCard(event);
 });
@@ -68,14 +68,17 @@ gameViewBtn.addEventListener("click", function() {
 
 // orchestrating functions
 
-function fetchUserData() {
+function setUserData() {
   var userName = assignCase(domUserID.value);
-
   game.players[0] = createPlayer(userName, domUserAvatar.value, 0);
+  game.activeView = "chooseGame";
+  game.subHeading = changeSubHeading();
+}
+
+function chooseGame() {
   renderPlayer(game.players[0], domPlayerIcon, domPlayerName);
   renderScore();
   toggleView(userInputView, gameChoiceView);
-  game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
 }
 
@@ -93,46 +96,6 @@ function reloadFighterSelection() {
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
-}
-
-function showRules(event) {
-  var classicRulesDiv = classicContainer.querySelector(".game-rules");
-  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
-
-  if(event.target.closest(".game-card")?.classList.contains("classic-container")) {
-    var rules = classicRulesDiv.querySelectorAll("h4");
-    classicRulesDiv.classList.add("visible-classic");
-    for (var i = 0; i < rules.length; i++) {
-      rules[i].classList.add("visible");
-    }
-  } else if(event.target.closest(".game-card")?.classList.contains("difficult-container")) {
-      var rules = difficultRulesDiv.querySelectorAll("h4");
-      difficultRulesDiv.classList.add("visible-difficult");
-      for (var i = 0; i < rules.length; i++) {
-        rules[i].classList.add("visible");
-      }
-    }
-}
-
-function collapseRules(event) {
-  var classicRulesDiv = classicContainer.querySelector(".game-rules");
-  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
-
-  if(event.target.closest(".game-card")?.classList.contains("classic-container")) {
-    var rules = classicRulesDiv.querySelectorAll("h4");
-    for (var i = 0; i < rules.length; i++) {
-      classicRulesDiv.querySelector("h4").classList.remove("visible");
-    }
-    classicRulesDiv.classList.remove("visible-classic");
-  } 
-
-  if(event.target.closest(".game-card")?.classList.contains("difficult-container")) {
-    var rules = difficultRulesDiv.querySelectorAll("h4");
-    for (var i = 0; i < rules.length; i++) {
-      difficultRulesDiv.querySelector("h4").classList.remove("visible");
-    }
-    difficultRulesDiv.classList.remove("visible-difficult");
-  } 
 }
 
 function showGameBoard() {
@@ -212,6 +175,28 @@ function displayResult(event) {
 
 // Data model functions 
 
+function createPlayer(label, icon, score) {
+  var player = {
+    name: label,
+    avatar: icon,
+    wins: score,
+    choice: ""
+  };
+  return player;
+}
+
+function createFirstGame() {
+  var game = {
+    logic: {},
+    players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "💻", 0)],
+    fighters: [],
+    lastResult: "",
+    activeView: "userInput",
+    subHeading: "Enter your details"
+  }
+  return game;
+}
+
 function setFighters(gameObject) {
   return Object.keys(gameObject.logic);
 }
@@ -233,6 +218,7 @@ function generateDifficultLogic() {
     lizard: ["paper", "alien"],
     alien: ["scissors", "rock"] 
   };
+  return difficultLogic;
 }
 
 function createGame (logic, gameObject) {
@@ -243,7 +229,6 @@ function createGame (logic, gameObject) {
     proxyObject.logic = generateDifficultLogic();
   }
   proxyObject.fighters = setFighters(proxyObject);
-  proxyObject.subHeading = changeSubHeading();
   gameObject = proxyObject;
   return gameObject;
 }
@@ -257,42 +242,30 @@ function setGameData(event, gameObject) {
   return gameObject;
 }
 
-function createFirstGame() {
-  var game = {
-    logic: {},
-    players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "💻", 0)],
-    subHeading: changeSubHeading(),
-    fighters: [],
-    lastResult: ""
-  }
-  return game;
-}
-
 function changeSubHeading() {
-  if (!userInputView.classList.contains("hidden")) {
-    return "Enter your details";
-  } else if (!gameChoiceView.classList.contains("hidden")) {
-    return "Select the game type";
-  } else if (!chooseFighterView.classList.contains("hidden")) {
-    return "Choose your fighter";
-  } else if (!resultView.classList.contains("hidden")) {
-    return "Reveal computer's choice!";
-  }
+  var subHeading = "";
+  if (game.activeView === "userInput") {
+    subHeading = "Enter your details";
+  } else if (game.activeView === "chooseGame") {
+    subHeading = "Select the game type";
+  } else if (game.activeView === "chooseFighter") {
+    subHeading = "Choose your fighter";
+  } else if (game.activeView === "revealResult") {
+    subHeading = "Reveal computer's choice!";
+  } else if (game.activeView === "declareDraw") {
+    subHeading = "😞 It's a Draw! 😞"
+  } else if (game.activeView === "declareLoss") {
+    subHeading = `${proxyObject.players[1].avatar} Computer won this round! ${proxyObject.players[1].avatar}`
+  } else {
+    subHeading = `${proxyObject.players[0].avatar.toString()} You won this round! ${proxyObject.players[0].avatar.toString()}`
+  } 
+  return subHeading;
 }
 
 function getRandomIndex(array) {
   return Math.floor(Math.random() * array.length);
 }
 
-function createPlayer(label, icon, score) {
-  var player = {
-    name: label,
-    avatar: icon,
-    wins: score,
-    choice: ""
-  };
-  return player;
-}
 
 function assignChoice(event, gameObject) {
   var proxyGame = {...gameObject};
@@ -386,6 +359,46 @@ function allowSubmit() {
     domSubmitBtn.disabled = true;
     domSubmitBtn.classList.remove("submit-btn-alt");
   }
+}
+
+function showRules(event) {
+  var classicRulesDiv = classicContainer.querySelector(".game-rules");
+  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
+
+  if(event.target.closest(".game-card")?.classList.contains("classic-container")) {
+    var rules = classicRulesDiv.querySelectorAll("h4");
+    classicRulesDiv.classList.add("visible-classic");
+    for (var i = 0; i < rules.length; i++) {
+      rules[i].classList.add("visible");
+    }
+  } else if(event.target.closest(".game-card")?.classList.contains("difficult-container")) {
+      var rules = difficultRulesDiv.querySelectorAll("h4");
+      difficultRulesDiv.classList.add("visible-difficult");
+      for (var i = 0; i < rules.length; i++) {
+        rules[i].classList.add("visible");
+      }
+    }
+}
+
+function collapseRules(event) {
+  var classicRulesDiv = classicContainer.querySelector(".game-rules");
+  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
+
+  if(event.target.closest(".game-card")?.classList.contains("classic-container")) {
+    var rules = classicRulesDiv.querySelectorAll("h4");
+    for (var i = 0; i < rules.length; i++) {
+      classicRulesDiv.querySelector("h4").classList.remove("visible");
+    }
+    classicRulesDiv.classList.remove("visible-classic");
+  } 
+
+  if(event.target.closest(".game-card")?.classList.contains("difficult-container")) {
+    var rules = difficultRulesDiv.querySelectorAll("h4");
+    for (var i = 0; i < rules.length; i++) {
+      difficultRulesDiv.querySelector("h4").classList.remove("visible");
+    }
+    difficultRulesDiv.classList.remove("visible-difficult");
+  } 
 }
 
 function renderPlayer(playerObject, domIcon, domName) {
