@@ -29,7 +29,6 @@ var resultView = document.querySelector(".result-view");
 
 //Global variables
 var game = createFirstGame();
-console.log(game)
 var timerID;
 
 // event listeners
@@ -72,7 +71,7 @@ function setUserData() {
   var userName = assignCase(domUserID.value);
   game.players[0] = createPlayer(userName, domUserAvatar.value, 0);
   game.activeView = "chooseGame";
-  game.subHeading = changeSubHeading();
+  game.subHeading = changeSubHeading(game);
 }
 
 function chooseGame() {
@@ -229,6 +228,7 @@ function createGame (logic, gameObject) {
     proxyObject.logic = generateDifficultLogic();
   }
   proxyObject.fighters = setFighters(proxyObject);
+  proxyObject.activeView = "chooseFighter";
   gameObject = proxyObject;
   return gameObject;
 }
@@ -239,25 +239,26 @@ function setGameData(event, gameObject) {
   } else if (event.target.closest(".game-card")?.classList.contains("difficult-container")) {
     gameObject = createGame("difficult", gameObject)
   };
+  gameObject.subHeading = changeSubHeading(gameObject);
   return gameObject;
 }
 
-function changeSubHeading() {
+function changeSubHeading(gameObject) {
   var subHeading = "";
-  if (game.activeView === "userInput") {
+  if (gameObject.activeView === "userInput") {
     subHeading = "Enter your details";
-  } else if (game.activeView === "chooseGame") {
+  } else if (gameObject.activeView === "chooseGame") {
     subHeading = "Select the game type";
-  } else if (game.activeView === "chooseFighter") {
+  } else if (gameObject.activeView === "chooseFighter") {
     subHeading = "Choose your fighter";
-  } else if (game.activeView === "revealResult") {
+  } else if (gameObject.activeView === "revealResult") {
     subHeading = "Reveal computer's choice!";
-  } else if (game.activeView === "declareDraw") {
+  } else if (gameObject.activeView === "declareDraw") {
     subHeading = "😞 It's a Draw! 😞"
-  } else if (game.activeView === "declareLoss") {
-    subHeading = `${proxyObject.players[1].avatar} Computer won this round! ${proxyObject.players[1].avatar}`
+  } else if (gameObject.activeView === "declareLoss") {
+    subHeading = `${gameObject.players[1].avatar} Computer won this round! ${gameObject.players[1].avatar}`
   } else {
-    subHeading = `${proxyObject.players[0].avatar.toString()} You won this round! ${proxyObject.players[0].avatar.toString()}`
+    subHeading = `${gameObject.players[0].avatar.toString()} You won this round! ${gameObject.players[0].avatar.toString()}`
   } 
   return subHeading;
 }
