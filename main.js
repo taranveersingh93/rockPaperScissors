@@ -35,7 +35,7 @@ gameChoiceContainer.addEventListener("mouseout", function(event) {
     collapseRules(event);
 });
 gameChoiceContainer.addEventListener("click", function(event) {
-  if(event.target.classList) {
+  if (event.target.classList) {
     game = setGameData(event, game);
     showGameBoard();
   }
@@ -67,15 +67,15 @@ function setUserData() {
 
 function setPlayerChoice(event) {
   if (event.target.classList.contains("single-fighter")) {
-    prepareFightData(event)
-    goToReveal()
+    prepareFightData(event);
+    goToReveal();
   }
 }
 
 function fightOrFlight(event) {
   var cardIsClosed = event.target.classList.contains("result-unknown");
   var cardIsOpen = event.target.classList.contains("result-card") || event.target.classList.contains("result-single-fighter");
-  if(cardIsClosed) {
+  if (cardIsClosed) {
     game = processResult(game);
     proceedToResult();
   } else if (cardIsOpen) {
@@ -102,7 +102,8 @@ function createFirstGame() {
     lastResult: "",
     referenceView: "userInput",
     subHeading: "Enter your details"
-  }
+  };
+
   return game;
 }
 
@@ -112,7 +113,8 @@ function generateClassicLogic() {
     paper: ["rock"],
     rock: ["scissors"]
   };
-  return classicLogic
+
+  return classicLogic;
 }
 
 function generateDifficultLogic() {
@@ -123,6 +125,7 @@ function generateDifficultLogic() {
     lizard: ["paper", "alien"],
     alien: ["scissors", "rock"] 
   };
+
   return difficultLogic;
 }
 
@@ -137,6 +140,7 @@ function createGame (logic, gameObject) {
   } else {
     proxyObject.logic = generateDifficultLogic();
   }
+
   proxyObject.fighters = setFighters(proxyObject);
   gameObject = proxyObject;
   return gameObject;
@@ -144,10 +148,11 @@ function createGame (logic, gameObject) {
 
 function setGameData(event, gameObject) {
   if (event.target.closest(".game-card")?.classList.contains("classic-container")) {
-    gameObject = createGame("classic", gameObject)
+    gameObject = createGame("classic", gameObject);
   } else if (event.target.closest(".game-card")?.classList.contains("difficult-container")) {
-    gameObject = createGame("difficult", gameObject)
-  };
+    gameObject = createGame("difficult", gameObject);
+  }
+
   updateReferenceView(gameObject, "chooseFighter");
   return gameObject;
 }
@@ -177,7 +182,7 @@ function addToWins(playerObject) {
   var proxyPlayer = {...playerObject};
   proxyPlayer.wins++;
   playerObject = proxyPlayer;
-  return playerObject
+  return playerObject;
 }
 
 function checkPlayerWin(gameObject) {
@@ -185,7 +190,7 @@ function checkPlayerWin(gameObject) {
   var playerChoice = gameObject.players[0].choice;
   var computerChoice = gameObject.players[1].choice;
   for (var i = 0; i < gameObject.logic[playerChoice].length; i++) {
-    if(gameObject.logic[playerChoice][i] === computerChoice) {
+    if (gameObject.logic[playerChoice][i] === computerChoice) {
       winFound = true;
     }
   }
@@ -195,7 +200,7 @@ function checkPlayerWin(gameObject) {
 function checkDraw(gameObject) {
   var playerChoice = gameObject.players[0].choice;
   var computerChoice = gameObject.players[1].choice;
-  return playerChoice === computerChoice
+  return playerChoice === computerChoice;
 }
 
 function processDraw(gameObject) {
@@ -225,7 +230,7 @@ function processLoss(gameObject) {
 }
 
 function processResult(gameObject) {
-  if(checkDraw(gameObject)) {
+  if (checkDraw(gameObject)) {
     gameObject = processDraw(gameObject);
   } else if (checkPlayerWin(gameObject)) {
     gameObject = processWin(gameObject);
