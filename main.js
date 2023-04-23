@@ -216,13 +216,16 @@ function setFighters(gameObject) {
   return Object.keys(gameObject.logic);
 }
 
-function createGame (logic, gameObject) {
-  var proxyObject = {...gameObject};
+function generateClassicLogic() {
   var classicLogic = {
     scissors: ["paper"],
     paper: ["rock"],
     rock: ["scissors"]
   };
+  return classicLogic
+}
+
+function generateDifficultLogic() {
   var difficultLogic = {  
     rock: ["scissors", "lizard"], 
     scissors: ["paper", "lizard"], 
@@ -230,11 +233,14 @@ function createGame (logic, gameObject) {
     lizard: ["paper", "alien"],
     alien: ["scissors", "rock"] 
   };
+}
 
+function createGame (logic, gameObject) {
+  var proxyObject = {...gameObject};
   if (logic === "classic") {
-    proxyObject.logic = classicLogic;
+    proxyObject.logic = generateClassicLogic();
   } else {
-    proxyObject.logic = difficultLogic;
+    proxyObject.logic = generateDifficultLogic();
   }
   proxyObject.fighters = setFighters(proxyObject);
   proxyObject.subHeading = changeSubHeading();
@@ -243,13 +249,11 @@ function createGame (logic, gameObject) {
 }
 
 function setGameData(event, gameObject) {
-  if(event.target.closest(".game-card")?.classList.contains("classic-container")) {
+  if (event.target.closest(".game-card")?.classList.contains("classic-container")) {
     gameObject = createGame("classic", gameObject)
-  } 
-  if(event.target.closest(".game-card")?.classList.contains("difficult-container")) {
+  } else if (event.target.closest(".game-card")?.classList.contains("difficult-container")) {
     gameObject = createGame("difficult", gameObject)
   };
-
   return gameObject;
 }
 
