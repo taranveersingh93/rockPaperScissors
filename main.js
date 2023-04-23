@@ -93,8 +93,6 @@ function reloadFighterSelection() {
   showGameBoard();
 }
 
-
-
 function showGameBoard() {
   goToView(chooseFighterView);
   showDomElement(gameViewBtn);
@@ -280,7 +278,6 @@ function changeSubHeading(gameObject) {
 function getRandomIndex(array) {
   return Math.floor(Math.random() * array.length);
 }
-
 
 function assignHumanChoice(event, gameObject) {
   var proxyGame = {...gameObject};
