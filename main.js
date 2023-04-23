@@ -14,6 +14,7 @@ var domSubmitBtn = document.querySelector(".form-submit-btn");
 
 // game choice view
 var gameChoiceView = document.querySelector(".game-choice-view");
+var gameChoiceContainer = document.querySelector(".game-choice-container");
 var gameViewBtn = document.querySelector(".reload-game-view");
 var classicContainer = document.querySelector(".classic-container");
 var difficultContainer = document.querySelector(".difficult-container");
@@ -33,20 +34,25 @@ var timerID;
 // event listeners
 domUserID.addEventListener("keyup", allowSubmit);
 domSubmitBtn.addEventListener("click", fetchUserData);
-classicContainer.addEventListener("mouseover", function(event) {
-  showRules(event);
+gameChoiceContainer.addEventListener("click", function(event) {
+  console.log(event.target)
+  if(event.target.classList?.contains("game-card")) {
+    game = setGameData(event, game);
+    showGameBoard();
+  }
 });
-classicContainer.addEventListener("mouseout", function(event) {
-  collapseRules(event);
-});
-difficultContainer.addEventListener("mouseover", function(event) {
-  showRules(event);
-});
-difficultContainer.addEventListener("mouseout", function(event) {
-  collapseRules(event);
-});
-classicContainer.addEventListener("click", setClassicLogic);
-difficultContainer.addEventListener("click", setDifficultLogic);
+// classicContainer.addEventListener("mouseover", function(event) {
+//   showRules(event);
+// });
+// classicContainer.addEventListener("mouseout", function(event) {
+//   collapseRules(event);
+// });
+// difficultContainer.addEventListener("mouseover", function(event) {
+//   showRules(event);
+// });
+// difficultContainer.addEventListener("mouseout", function(event) {
+//   collapseRules(event);
+// });
 domFighters.addEventListener("mouseover", function(event) {
   showBeatCard(event);
 });
@@ -135,22 +141,9 @@ function collapseRules(event) {
   } 
 }
 
-function setClassicLogic() {
-  game.logic = createClassicGame(game.logic);
-  game.fighters = setFighters(game);
+function showGameBoard() {
   toggleView(gameChoiceView, chooseFighterView);
   showDomElement(gameViewBtn);
-  game.subHeading = changeSubHeading();
-  renderTextToElement(game.subHeading, domSubHeading);
-  showFighters(game);
-}
-
-function setDifficultLogic() {
-  game.logic = createDifficultGame(game.logic);
-  game.fighters = setFighters(game);
-  toggleView(gameChoiceView, chooseFighterView);
-  showDomElement(gameViewBtn);
-  game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
 }
@@ -224,6 +217,50 @@ function displayResult(event) {
 
 
 // Data model functions 
+
+function setFighters(gameObject) {
+  return Object.keys(gameObject.logic);
+}
+
+function createGame (logic, gameObject) {
+  var proxyObject = {...gameObject};
+  var classicLogic = {
+    scissors: ["paper"],
+    paper: ["rock"],
+    rock: ["scissors"]
+  };
+  var difficultLogic = {  
+    rock: ["scissors", "lizard"], 
+    scissors: ["paper", "lizard"], 
+    paper: ["rock", "alien"], 
+    lizard: ["paper", "alien"],
+    alien: ["scissors", "rock"] 
+  };
+
+  if (logic === "classic") {
+    proxyObject.logic = classicLogic;
+  } else {
+    proxyObject.logic = difficultLogic;
+  }
+  
+  gameObject = proxyObject;
+  return gameObject;
+}
+
+function setGameData(event, gameObject) {
+  
+  if(event.target.closest(".game-card").classList.contains("classic-container")) {
+    gameObject = createGame("classic", gameObject)
+  } 
+  if(event.target.closest(".game-card").classList.contains("difficult-container")) {
+    gameObject = createGame("difficult", gameObject)
+  };
+  gameObject.fighters = setFighters(gameObject);
+  gameObject.subHeading = changeSubHeading();
+
+  return gameObject;
+}
+
 function createFirstGame() {
   var game = {
     logic: {},
@@ -260,32 +297,6 @@ function createPlayer(label, icon, score) {
     choice: ""
   };
   return player;
-}
-
-function createClassicGame(logicObject) {
-  var proxyLogic = {
-    scissors: ["paper"],
-    paper: ["rock"],
-    rock: ["scissors"]
-  };
-  logicObject = {...proxyLogic};
-  return logicObject;
-}
-
-function createDifficultGame(logicObject) {
-  var proxyLogic = {  
-    rock: ["scissors", "lizard"], 
-    scissors: ["paper", "lizard"], 
-    paper: ["rock", "alien"], 
-    lizard: ["paper", "alien"],
-    alien: ["scissors", "rock"] 
-  };
-  logicObject = {...proxyLogic};
-  return logicObject;
-}
-
-function setFighters(gameObject) {
-  return Object.keys(gameObject.logic);
 }
 
 function assignChoice(event, gameObject) {
