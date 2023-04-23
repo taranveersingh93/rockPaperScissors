@@ -37,17 +37,17 @@ domSubmitBtn.addEventListener("click", function() {
   setUserData();
   chooseGame();
 });
-gameChoiceContainer.addEventListener("click", function(event) {
-  if(event.target.classList) {
-    game = setGameData(event, game);
-    showGameBoard();
-  }
-});
 gameChoiceContainer.addEventListener("mouseover", function(event) {
     showRules(event);
 });
 gameChoiceContainer.addEventListener("mouseout", function(event) {
     collapseRules(event);
+});
+gameChoiceContainer.addEventListener("click", function(event) {
+  if(event.target.classList) {
+    game = setGameData(event, game);
+    showGameBoard();
+  }
 });
 domFighters.addEventListener("mouseover", function(event) {
   showBeatCard(event);
@@ -111,14 +111,23 @@ function showFighters(gameObject) {
 
 function setPlayerChoice(event) {
   if (event.target.classList.contains("single-fighter")) {
-    game = assignChoice(event, game);
-    game = compChoose(game)
-    toggleView(chooseFighterView, resultView);
-    showDomElement(gameViewBtn);
-    game.subHeading = changeSubHeading();
-    renderTextToElement(game.subHeading, domSubHeading);
-    renderResultPage();
+    assignChoiceToGame(event)
+    goToReveal()
   }
+}
+
+function goToReveal() {
+  toggleView(chooseFighterView, resultView);
+  showDomElement(gameViewBtn);
+  renderTextToElement(game.subHeading, domSubHeading);
+  renderResultPage();
+}
+
+function assignChoiceToGame(event) {
+  game = assignHumanChoice(event, game);
+  game = compChoose(game);
+  game.activeView = "revealResult";
+  game.subHeading = changeSubHeading(game);
 }
 
 function renderScore() {
@@ -268,7 +277,7 @@ function getRandomIndex(array) {
 }
 
 
-function assignChoice(event, gameObject) {
+function assignHumanChoice(event, gameObject) {
   var proxyGame = {...gameObject};
   proxyGame.players[0].choice = event.target.id;
   gameObject = proxyGame;
