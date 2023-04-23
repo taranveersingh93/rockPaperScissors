@@ -35,7 +35,7 @@ var timerID;
 domUserID.addEventListener("keyup", allowSubmit);
 domSubmitBtn.addEventListener("click", fetchUserData);
 gameChoiceContainer.addEventListener("click", function(event) {
-  if(event.target.classList?.contains("game-card")) {
+  if(event.target.classList) {
     game = setGameData(event, game);
     showGameBoard();
   }
@@ -236,21 +236,19 @@ function createGame (logic, gameObject) {
   } else {
     proxyObject.logic = difficultLogic;
   }
-  
+  proxyObject.fighters = setFighters(proxyObject);
+  proxyObject.subHeading = changeSubHeading();
   gameObject = proxyObject;
   return gameObject;
 }
 
 function setGameData(event, gameObject) {
-  
-  if(event.target.closest(".game-card").classList.contains("classic-container")) {
+  if(event.target.closest(".game-card")?.classList.contains("classic-container")) {
     gameObject = createGame("classic", gameObject)
   } 
-  if(event.target.closest(".game-card").classList.contains("difficult-container")) {
+  if(event.target.closest(".game-card")?.classList.contains("difficult-container")) {
     gameObject = createGame("difficult", gameObject)
   };
-  gameObject.fighters = setFighters(gameObject);
-  gameObject.subHeading = changeSubHeading();
 
   return gameObject;
 }
@@ -281,7 +279,6 @@ function changeSubHeading() {
 function getRandomIndex(array) {
   return Math.floor(Math.random() * array.length);
 }
-
 
 function createPlayer(label, icon, score) {
   var player = {
