@@ -1,30 +1,21 @@
 // query selectors
-// constant elements
 var domPlayerIcon = document.querySelector(".player-icon");
 var domPlayerName = document.querySelector(".player-name");
 var domPlayerScore = document.querySelector(".human-score");
 var domComputerScore = document.querySelector(".computer-score");
 var domSubHeading = document.querySelector("h2");
-
-// user input view
 var userInputView = document.querySelector(".user-input-view");
 var domUserID = document.querySelector("#user-name");
 var domUserAvatar = document.querySelector("#avatar");
 var domSubmitBtn = document.querySelector(".form-submit-btn");
-
-// game choice view
 var gameChoiceView = document.querySelector(".game-choice-view");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
 var gameViewBtn = document.querySelector(".reload-game-view");
 var classicContainer = document.querySelector(".classic-container");
 var difficultContainer = document.querySelector(".difficult-container");
-
-// choose fighters view
 var chooseFighterView = document.querySelector(".choose-fighter-view");
 var domFighters = document.querySelector(".all-fighters");
 var domResultFighters = document.querySelector(".both-fighters");
-
-// result view
 var resultView = document.querySelector(".result-view");
 
 //Global variables
@@ -35,7 +26,7 @@ var timerID;
 domUserID.addEventListener("keyup", allowSubmit);
 domSubmitBtn.addEventListener("click", function() {
   setUserData();
-  chooseGame();
+  showGameChoice();
 });
 gameChoiceContainer.addEventListener("mouseover", function(event) {
     showRules(event);
@@ -62,7 +53,7 @@ domResultFighters.addEventListener("click", function(event) {
   fightOrFlight(event);
 });
 gameViewBtn.addEventListener("click", function() {
-  updateActiveView(game, "chooseGame");
+  updateReferenceView(game, "chooseGame");
   reloadGameSelection();
 })
 
@@ -71,93 +62,14 @@ gameViewBtn.addEventListener("click", function() {
 function setUserData() {
   var userName = assignCase(domUserID.value);
   game.players[0] = createPlayer(userName, domUserAvatar.value, 0);
-  updateActiveView(game, "chooseGame");
-}
-
-function chooseGame() {
-  renderPlayer(game.players[0], domPlayerIcon, domPlayerName);
-  renderScore();
-  goToView(gameChoiceView);
-  renderTextToElement(game.subHeading, domSubHeading);
-}
-
-function reloadGameSelection() {
-  goToView(gameChoiceView);
-  hideDomElement(gameViewBtn);
-  renderTextToElement(game.subHeading, domSubHeading);
-}
-
-function reloadFighterSelection() {
-  clearTimeout(timerID);
-  updateActiveView(game, "chooseFighter");
-  showGameBoard();
-}
-
-function showGameBoard() {
-  goToView(chooseFighterView);
-  showDomElement(gameViewBtn);
-  renderTextToElement(game.subHeading, domSubHeading);
-  showFighters(game);
-}
-
-function showFighters(gameObject) {
-  createAllFighterHTML(gameObject);
-  renderFighters(gameObject);
+  updateReferenceView(game, "chooseGame");
 }
 
 function setPlayerChoice(event) {
   if (event.target.classList.contains("single-fighter")) {
-    assignChoiceToGame(event)
+    prepareFightData(event)
     goToReveal()
   }
-}
-
-function goToReveal() {
-  goToView(resultView);
-  showDomElement(gameViewBtn);
-  renderTextToElement(game.subHeading, domSubHeading);
-  renderResultPage();
-}
-
-function assignChoiceToGame(event) {
-  game = assignHumanChoice(event, game);
-  game = compChoose(game);
-  updateActiveView(game, "revealResult");
-}
-
-function renderScore() {
-  domPlayerScore.innerText = `Wins: ${game.players[0].wins}`;
-  domComputerScore.innerText = `Wins: ${game.players[1].wins}`;
-}
-
-function animateDraw(userCard, compCard) {
-  userCard.classList.add("loser");
-  compCard.classList.add("loser");
-}
-
-function animateWin(userCard, compCard) {
-  userCard.classList.add("winner");
-  compCard.classList.add("loser");
-}
-
-function animateLoss(userCard, compCard) {
-  userCard.classList.add("loser");
-  compCard.classList.add("winner");
-}
-
-function announceResult() {
-  var humanCard = document.querySelector(".human-card");
-  var computerCard = document.querySelector(".comp-card");
-  renderTextToElement(game.subHeading, domSubHeading);
-  if(game.lastResult === "draw") {
-    animateDraw(humanCard, computerCard);
-  } else if (game.lastResult === "win") {
-    animateWin(humanCard, computerCard);
-  } else {
-    animateLoss(humanCard, computerCard);
-  }
-  renderScore();
-  timerID = setTimeout(reloadFighterSelection, 4000);
 }
 
 function fightOrFlight(event) {
@@ -171,21 +83,7 @@ function fightOrFlight(event) {
   }
 }
 
-function proceedToResult() {
-  var domRevealCard = document.querySelector(".result-unknown");
-  var domComputerCard = document.querySelector(".comp-card");
-  hideDomElement(domRevealCard);
-  showDomElement(domComputerCard);
-  setTimeout(announceResult, 300);
-}
-
-// Data model functions 
-
-function updateActiveView(gameObject, view) {
-  gameObject.activeView = view;
-  gameObject.subHeading = changeSubHeading(gameObject);
-}
-
+// Solo functions 
 function createPlayer(label, icon, score) {
   var player = {
     name: label,
@@ -202,14 +100,10 @@ function createFirstGame() {
     players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "💻", 0)],
     fighters: [],
     lastResult: "",
-    activeView: "userInput",
+    referenceView: "userInput",
     subHeading: "Enter your details"
   }
   return game;
-}
-
-function setFighters(gameObject) {
-  return Object.keys(gameObject.logic);
 }
 
 function generateClassicLogic() {
@@ -232,6 +126,10 @@ function generateDifficultLogic() {
   return difficultLogic;
 }
 
+function setFighters(gameObject) {
+  return Object.keys(gameObject.logic);
+}
+
 function createGame (logic, gameObject) {
   var proxyObject = {...gameObject};
   if (logic === "classic") {
@@ -240,7 +138,6 @@ function createGame (logic, gameObject) {
     proxyObject.logic = generateDifficultLogic();
   }
   proxyObject.fighters = setFighters(proxyObject);
-  
   gameObject = proxyObject;
   return gameObject;
 }
@@ -251,32 +148,8 @@ function setGameData(event, gameObject) {
   } else if (event.target.closest(".game-card")?.classList.contains("difficult-container")) {
     gameObject = createGame("difficult", gameObject)
   };
-  updateActiveView(gameObject, "chooseFighter");
+  updateReferenceView(gameObject, "chooseFighter");
   return gameObject;
-}
-
-function changeSubHeading(gameObject) {
-  var subHeading = "";
-  if (gameObject.activeView === "userInput") {
-    subHeading = "Enter your details";
-  } else if (gameObject.activeView === "chooseGame") {
-    subHeading = "Select the game type";
-  } else if (gameObject.activeView === "chooseFighter") {
-    subHeading = "Choose your fighter";
-  } else if (gameObject.activeView === "revealResult") {
-    subHeading = "Reveal computer's choice!";
-  } else if (gameObject.activeView === "declareDraw") {
-    subHeading = "😞 It's a Draw! 😞"
-  } else if (gameObject.activeView === "declareLoss") {
-    subHeading = `${gameObject.players[1].avatar} Computer won this round! ${gameObject.players[1].avatar}`
-  } else {
-    subHeading = `${gameObject.players[0].avatar.toString()} You won this round! ${gameObject.players[0].avatar.toString()}`
-  } 
-  return subHeading;
-}
-
-function getRandomIndex(array) {
-  return Math.floor(Math.random() * array.length);
 }
 
 function assignHumanChoice(event, gameObject) {
@@ -292,6 +165,12 @@ function compChoose(gameObject) {
   proxyGame.players[1].choice = randomFighter;
   gameObject = proxyGame;
   return gameObject;
+}
+
+function prepareFightData(event) {
+  game = assignHumanChoice(event, game);
+  game = compChoose(game);
+  updateReferenceView(game, "revealResult");
 }
 
 function addToWins(playerObject) {
@@ -322,7 +201,7 @@ function checkDraw(gameObject) {
 function processDraw(gameObject) {
   var proxyObject = {...gameObject};
   proxyObject.lastResult = "draw";
-  updateActiveView(proxyObject, "declareDraw");
+  updateReferenceView(proxyObject, "declareDraw");
   gameObject = proxyObject;
   return gameObject;
 }
@@ -331,7 +210,7 @@ function processWin(gameObject) {
   var proxyObject = {...gameObject};
   proxyObject.lastResult = "win";
   proxyObject.players[0].wins++;
-  updateActiveView(proxyObject, "declareWin");
+  updateReferenceView(proxyObject, "declareWin");
   gameObject = proxyObject;
   return gameObject;
 }
@@ -340,7 +219,7 @@ function processLoss(gameObject) {
   var proxyObject = {...gameObject};
   proxyObject.lastResult = "loss";
   proxyObject.players[1].wins++;
-  updateActiveView(proxyObject, "declareLoss");
+  updateReferenceView(proxyObject, "declareLoss");
   gameObject = proxyObject;
   return gameObject;
 }
@@ -356,159 +235,32 @@ function processResult(gameObject) {
   return gameObject;
 }
 
-//DOM functions
-function renderTextToElement(variable, dom) {
-  dom.innerText = variable;
+// helper functions
+
+function updateReferenceView(gameObject, view) {
+  gameObject.referenceView = view;
+  gameObject.subHeading = changeSubHeading(gameObject);
 }
 
-function allowSubmit() {
-  if(domUserID.value) {
-    domSubmitBtn.disabled = false;
-    domSubmitBtn.classList.add("submit-btn-alt");
-  } else {
-    domSubmitBtn.disabled = true;
-    domSubmitBtn.classList.remove("submit-btn-alt");
+function changeSubHeading(gameObject) {
+  var subHeading = "";
+  var referenceObject = {
+    userInput: "Enter your details",
+    chooseGame: "Select the game type",
+    chooseFighter: "Choose your fighter",
+    revealResult: "Reveal computer's choice",
+    declareDraw: "😞 It's a Draw! 😞",
+    declareLoss: `${gameObject.players[1].avatar} Computer won this round! ${gameObject.players[1].avatar}`,
+    declareWin: `${gameObject.players[0].avatar.toString()} You won this round! ${gameObject.players[0].avatar.toString()}`
   }
+  subHeading = referenceObject[gameObject.referenceView];
+  return subHeading;
 }
 
-function showRules(event) {
-  var classicRulesDiv = classicContainer.querySelector(".game-rules");
-  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
-
-  if(event.target.closest(".game-card")?.classList.contains("classic-container")) {
-    var rules = classicRulesDiv.querySelectorAll("h4");
-    classicRulesDiv.classList.add("visible-classic");
-    for (var i = 0; i < rules.length; i++) {
-      rules[i].classList.add("visible");
-    }
-  } else if(event.target.closest(".game-card")?.classList.contains("difficult-container")) {
-      var rules = difficultRulesDiv.querySelectorAll("h4");
-      difficultRulesDiv.classList.add("visible-difficult");
-      for (var i = 0; i < rules.length; i++) {
-        rules[i].classList.add("visible");
-      }
-    }
-}
-
-function collapseRules(event) {
-  var classicRulesDiv = classicContainer.querySelector(".game-rules");
-  var difficultRulesDiv = difficultContainer.querySelector(".game-rules");
-
-  if(event.target.closest(".game-card")?.classList.contains("classic-container")) {
-    var rules = classicRulesDiv.querySelectorAll("h4");
-    for (var i = 0; i < rules.length; i++) {
-      classicRulesDiv.querySelector("h4").classList.remove("visible");
-    }
-    classicRulesDiv.classList.remove("visible-classic");
-  } 
-
-  if(event.target.closest(".game-card")?.classList.contains("difficult-container")) {
-    var rules = difficultRulesDiv.querySelectorAll("h4");
-    for (var i = 0; i < rules.length; i++) {
-      difficultRulesDiv.querySelector("h4").classList.remove("visible");
-    }
-    difficultRulesDiv.classList.remove("visible-difficult");
-  } 
-}
-
-function renderPlayer(playerObject, domIcon, domName) {
-  domIcon.innerText = playerObject.avatar;
-  domName.innerText = playerObject.name;
-}
-
-function createSingleHTML(fighter, gameObject) {
-  var htmlCode = "";
-  htmlCode += 
-  `
-  <section class="fighter-card">
-    <img src="assets/${fighter}.png" alt="${fighter} icon" class="single-fighter" id="${fighter}">
-      <div class="beat-card" id="${fighter}-beat-card">
-        Beats
-        <div class="beats">
-  `
-  for (var i = 0; i < gameObject.logic[fighter].length; i++) {
-    htmlCode += 
-    `
-    <img class="beat-fighter" src="assets/${gameObject.logic[fighter][i]}.png">
-    `
-  }
-          
-  htmlCode += 
-  `
-        </div>
-      </div>
-  </section>
-  `
-  ;
-  return htmlCode;
-} 
-
-function createAllFighterHTML(gameObject) {
-  var htmlCode = "";
-  for (var i = 0; i < gameObject.fighters.length; i++) {
-    htmlCode += createSingleHTML(gameObject.fighters[i], gameObject);
-  }
-  return htmlCode
-}
-
-function renderFighters(gameObject) {
-  domFighters.innerHTML = createAllFighterHTML(gameObject);
-}
-
-function showBeatCard(event) {
-  if (event.target.classList.contains("single-fighter")) {
-    var parentID = event.target.id;
-    var cardID = `${parentID}-beat-card`;
-    var targetCard = document.querySelector("#"+cardID);
-    targetCard.classList.add("show");
-  }
-}
-
-function hideBeatCard(event) {
-  if(event.target.classList.contains("single-fighter")) {
-    var parentID = event.target.id;
-    var cardID = `${parentID}-beat-card`;
-    var targetCard = document.querySelector("#"+cardID);
-    targetCard.classList.remove("show");
-  }
-}
-
-function createShowdownHTML(gameObject) {
-  var htmlCode = 
-  `
-  <div class="result-card human-card">
-    <img class="result-single-fighter" src="assets/${gameObject.players[0].choice}.png">
-  </div>
-  <div class="result-unknown">
-    Click to reveal
-  </div>
-  <div class="result-card comp-card hidden">
-    <img class="result-single-fighter" src="assets/${gameObject.players[1].choice}.png">
-  </div>
-  `;
-  return htmlCode;
-}
-
-function renderResultPage() {
-  domResultFighters.innerHTML = createShowdownHTML(game);
-}
-function hideDomElement(element) {
-  element.classList.add("hidden");
-}
-
-function showDomElement(element) {
-  element.classList.remove("hidden");
+function getRandomIndex(array) {
+  return Math.floor(Math.random() * array.length);
 }
 
 function assignCase(name) {
   return name[0].toUpperCase() + name.slice(1);
 }
-
-function goToView(toView) {
-  hideDomElement(userInputView);
-  hideDomElement(gameChoiceView);
-  hideDomElement(chooseFighterView);
-  hideDomElement(resultView);
-  showDomElement(toView);
-}
-
