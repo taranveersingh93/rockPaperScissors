@@ -1,30 +1,32 @@
 // query selectors
-var userID = document.querySelector("#user-name");
-var userAvatar = document.querySelector("#avatar");
-var formSubmitBtn = document.querySelector(".form-submit-btn");
-var formNewSubmitBtn = document.querySelector(".form-new-submit-btn");
+// constant elements
 var domPlayerIcon = document.querySelector(".player-icon");
 var domPlayerName = document.querySelector(".player-name");
 var domPlayerScore = document.querySelector(".human-score");
 var domComputerScore = document.querySelector(".computer-score");
+var domSubHeading = document.querySelector("h2");
+
+// user input view
 var userInputView = document.querySelector(".user-input-view");
+var domUserID = document.querySelector("#user-name");
+var domUserAvatar = document.querySelector("#avatar");
+var domSubmitBtn = document.querySelector(".form-submit-btn");
+
+// game choice view
 var gameChoiceView = document.querySelector(".game-choice-view");
-var chooseFighterView = document.querySelector(".choose-fighter-view");
-var resultView = document.querySelector(".result-view");
 var gameViewBtn = document.querySelector(".reload-game-view");
-var gameViewSec = document.querySelector(".reload-game-view");
-var gameChoiceTitle = document.querySelector(".game-choice-title");
-var gameChoiceContainer = document.querySelector(".game-choice-container");
 var classicContainer = document.querySelector(".classic-container");
 var difficultContainer = document.querySelector(".difficult-container");
-var domSubHeading = document.querySelector("h2");
+
+// choose fighters view
+var chooseFighterView = document.querySelector(".choose-fighter-view");
 var domFighters = document.querySelector(".all-fighters");
 var domResultFighters = document.querySelector(".both-fighters");
 
-
+// result view
+var resultView = document.querySelector(".result-view");
 
 //Global variables
-
 var game = {
   logic: {},
   players: [createPlayer("Human", "❔", 0), createPlayer("Computer", "💻", 0)],
@@ -35,8 +37,8 @@ var game = {
 var timerID;
 
 // event listeners
-userID.addEventListener("keyup", allowSubmit);
-formSubmitBtn.addEventListener("click", fetchUserData);
+domUserID.addEventListener("keyup", allowSubmit);
+domSubmitBtn.addEventListener("click", fetchUserData);
 classicContainer.addEventListener("mouseover", function(event) {
   showRules(event);
 });
@@ -73,8 +75,8 @@ function assignCase(name) {
 }
 
 function fetchUserData() {
-  var userName = assignCase(userID.value);
-  game.players[0] = createPlayer(userName, userAvatar.value, 0);
+  var userName = assignCase(domUserID.value);
+  game.players[0] = createPlayer(userName, domUserAvatar.value, 0);
   renderPlayer(game.players[0], domPlayerIcon, domPlayerName);
   renderScore();
   toggleView(userInputView, gameChoiceView);
@@ -84,7 +86,7 @@ function fetchUserData() {
 
 function reloadGameSelection() {
   toggleView(chooseFighterView, gameChoiceView);
-  hideDomElement(gameViewSec);
+  hideDomElement(gameViewBtn);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
 }
@@ -92,7 +94,7 @@ function reloadGameSelection() {
 function reloadFighterSelection() {
   clearTimeout(timerID);
   toggleView(resultView, chooseFighterView);
-  showDomElement(gameViewSec);
+  showDomElement(gameViewBtn);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
@@ -108,17 +110,13 @@ function showRules(event) {
     for (var i = 0; i < rules.length; i++) {
       rules[i].classList.add("visible");
     }
-    // classicContainer.querySelector(".game-rules").querySelector("h4").classList.add("visible");
-  } 
-  else if(event.target.closest(".game-card").classList.contains("difficult-container")) {
-    var rules = difficultRulesDiv.querySelectorAll("h4");
-    difficultRulesDiv.classList.add("visible-difficult");
-    for (var i = 0; i < rules.length; i++) {
-      rules[i].classList.add("visible");
+  } else if(event.target.closest(".game-card").classList.contains("difficult-container")) {
+      var rules = difficultRulesDiv.querySelectorAll("h4");
+      difficultRulesDiv.classList.add("visible-difficult");
+      for (var i = 0; i < rules.length; i++) {
+        rules[i].classList.add("visible");
+      }
     }
-    // difficultContainer.querySelector(".game-rules").querySelector("h4").classList.add("visible");
-  }
-
 }
 
 function collapseRules(event) {
@@ -146,7 +144,7 @@ function setClassicLogic() {
   game.logic = createClassicGame(game.logic);
   game.fighters = setFighters(game);
   toggleView(gameChoiceView, chooseFighterView);
-  showDomElement(gameViewSec);
+  showDomElement(gameViewBtn);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
@@ -156,7 +154,7 @@ function setDifficultLogic() {
   game.logic = createDifficultGame(game.logic);
   game.fighters = setFighters(game);
   toggleView(gameChoiceView, chooseFighterView);
-  showDomElement(gameViewSec);
+  showDomElement(gameViewBtn);
   game.subHeading = changeSubHeading();
   renderTextToElement(game.subHeading, domSubHeading);
   showFighters(game);
@@ -172,7 +170,7 @@ function setPlayerChoice(event) {
     game = assignChoice(event, game);
     game = compChoose(game)
     toggleView(chooseFighterView, resultView);
-    showDomElement(gameViewSec);
+    showDomElement(gameViewBtn);
     game.subHeading = changeSubHeading();
     renderTextToElement(game.subHeading, domSubHeading);
     renderResultPage();
@@ -248,12 +246,12 @@ function getRandomIndex(array) {
 }
 
 function allowSubmit() {
-  if(userID.value) {
-    formSubmitBtn.disabled = false;
-    formSubmitBtn.classList.add("submit-btn-alt");
+  if(domUserID.value) {
+    domSubmitBtn.disabled = false;
+    domSubmitBtn.classList.add("submit-btn-alt");
   } else {
-    formSubmitBtn.disabled = true;
-    formSubmitBtn.classList.remove("submit-btn-alt");
+    domSubmitBtn.disabled = true;
+    domSubmitBtn.classList.remove("submit-btn-alt");
   }
 }
 
