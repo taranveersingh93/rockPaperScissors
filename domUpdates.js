@@ -236,4 +236,3 @@ function goToView(toView) {
   hideDomElement(resultView);
   showDomElement(toView);
 }
-
