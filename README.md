@@ -5,6 +5,7 @@
 Sometimes, important decision making does come down to a game of rock, paper and scissors and you might not have an opponent worthy enough to hang with you for 20+ rounds. This app solves that problem while having smooth transitions to ensure that each round looks and feels as important as it truly is.
 
 - The application lets the user choose their warrior name and avatar. The first alphabet of the name is automatically uppercased. These details are then displayed on the sidebar representing the player.
+- The user won't be allowed to submit the details (and proceed further) if they don't enter anything inside the name field.
 - The user gets to choose between a classic 3 fighter or a difficult 5 fighter game version.
 - The user can hover on a fighter to see who that fighter beats.
 - Once a fighter is selected, the user is taken to a showdown screen where they can click their own fighter to re-select their fighter.
