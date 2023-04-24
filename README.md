@@ -2,7 +2,7 @@
 # Rock, paper, scissors
 
 ### Abstract:
-Sometimes, important decision making does come down to a game of rock, paper and scissors and you might not have an opponent worthy enough to hang with you for 20+ rounds. This app solves that problem while having smooth transitions to ensure that each round looks and feels as important as it deserves.
+Sometimes, important decision making does come down to a game of rock, paper and scissors and you might not have an opponent worthy enough to hang with you for 20+ rounds. This app solves that problem while having smooth transitions to ensure that each round looks and feels as important as it truly is.
 
 - The application lets the user choose their warrior name and avatar. The first alphabet of the name is uppercased. These details are then displayed on the sidebar representing the player.
 - The user gets to choose between a classic 3 fighter or a difficult 5 fighter game version.
