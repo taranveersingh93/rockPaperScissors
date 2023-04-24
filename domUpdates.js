@@ -1,18 +1,18 @@
 function allowSubmit() {
-  if (domUserID.value) {
-    domSubmitBtn.disabled = false;
-    domSubmitBtn.classList.add("submit-btn-alt");
+  if (userID.value) {
+    submitBtn.disabled = false;
+    submitBtn.classList.add("submit-btn-alt");
   } else {
-    domSubmitBtn.disabled = true;
-    domSubmitBtn.classList.remove("submit-btn-alt");
+    submitBtn.disabled = true;
+    submitBtn.classList.remove("submit-btn-alt");
   }
 }
 
 function showGameChoice() {
-  renderPlayer(game.players[0], domPlayerIcon, domPlayerName);
+  renderPlayer(game.players[0], playerIcon, playerName);
   renderScore();
   goToView(gameChoiceView);
-  renderTextToElement(game.subHeading, domSubHeading);
+  renderTextToElement(game.subHeading, subHeading);
 }
 
 function showRules(event) {
@@ -61,14 +61,14 @@ function renderPlayer(playerObject, domIcon, domName) {
 }
 
 function renderScore() {
-  domPlayerScore.innerText = `Wins: ${game.players[0].wins}`;
-  domComputerScore.innerText = `Wins: ${game.players[1].wins}`;
+  playerScore.innerText = `Wins: ${game.players[0].wins}`;
+  computerScore.innerText = `Wins: ${game.players[1].wins}`;
 }
 
 function showGameBoard() {
   goToView(chooseFighterView);
   showDomElement(gameViewBtn);
-  renderTextToElement(game.subHeading, domSubHeading);
+  renderTextToElement(game.subHeading, subHeading);
   showFighters(game);
 }
 
@@ -78,7 +78,7 @@ function showFighters(gameObject) {
 }
 
 function renderFighters(gameObject) {
-  domFighters.innerHTML = createAllFighterHTML(gameObject);
+  allFighters.innerHTML = createAllFighterHTML(gameObject);
 }
 
 function createAllFighterHTML(gameObject) {
@@ -137,12 +137,12 @@ function hideBeatCard(event) {
 function goToReveal() {
   goToView(resultView);
   showDomElement(gameViewBtn);
-  renderTextToElement(game.subHeading, domSubHeading);
+  renderTextToElement(game.subHeading, subHeading);
   renderResultPage();
 }
 
 function renderResultPage() {
-  domResultFighters.innerHTML = createShowdownHTML(game);
+  resultViewFighters.innerHTML = createShowdownHTML(game);
 }
 
 function createShowdownHTML(gameObject) {
@@ -162,17 +162,17 @@ function createShowdownHTML(gameObject) {
 }
 
 function proceedToResult() {
-  var domRevealCard = document.querySelector(".result-unknown");
-  var domComputerCard = document.querySelector(".comp-card");
-  hideDomElement(domRevealCard);
-  showDomElement(domComputerCard);
+  var revealCard = document.querySelector(".result-unknown");
+  var computerCard = document.querySelector(".comp-card");
+  hideDomElement(revealCard);
+  showDomElement(computerCard);
   setTimeout(announceResult, 300);
 }
 
 function announceResult() {
   var humanCard = document.querySelector(".human-card");
   var computerCard = document.querySelector(".comp-card");
-  renderTextToElement(game.subHeading, domSubHeading);
+  renderTextToElement(game.subHeading, subHeading);
   if (game.lastResult === "draw") {
     animateDraw(humanCard, computerCard);
   } else if (game.lastResult === "win") {
@@ -200,9 +200,10 @@ function animateLoss(userCard, compCard) {
 }
 
 function reloadGameSelection() {
+  clearTimeout(timerID);
   goToView(gameChoiceView);
   hideDomElement(gameViewBtn);
-  renderTextToElement(game.subHeading, domSubHeading);
+  renderTextToElement(game.subHeading, subHeading);
 }
 
 function reloadFighterSelection() {
