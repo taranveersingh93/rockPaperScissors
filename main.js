@@ -18,14 +18,14 @@ var domFighters = document.querySelector(".all-fighters");
 var domResultFighters = document.querySelector(".both-fighters");
 var resultView = document.querySelector(".result-view");
 
-//Global variables
+// global variables
 var game = createFirstGame();
 var timerID;
 
 // event listeners
 domUserID.addEventListener("keyup", allowSubmit);
 domSubmitBtn.addEventListener("click", function() {
-  setUserData();
+  game = setUserData(game);
   showGameChoice();
 });
 gameChoiceContainer.addEventListener("mouseover", function(event) {
@@ -57,42 +57,8 @@ gameViewBtn.addEventListener("click", function() {
   reloadGameSelection();
 })
 
-// orchestrating functions
 
-function setUserData() {
-  var userName = assignCase(domUserID.value);
-  game.players[0] = createPlayer(userName, domUserAvatar.value, 0);
-  updateReferenceView(game, "chooseGame");
-}
-
-function setPlayerChoice(event) {
-  if (event.target.classList.contains("single-fighter")) {
-    prepareFightData(event);
-    goToReveal();
-  }
-}
-
-function fightOrFlight(event) {
-  var cardIsClosed = event.target.classList.contains("result-unknown");
-  var cardIsOpen = event.target.classList.contains("result-card") || event.target.classList.contains("result-single-fighter");
-  if (cardIsClosed) {
-    game = processResult(game);
-    proceedToResult();
-  } else if (cardIsOpen) {
-    reloadFighterSelection();
-  }
-}
-
-// Solo functions 
-function createPlayer(label, icon, score) {
-  var player = {
-    name: label,
-    avatar: icon,
-    wins: score,
-    choice: ""
-  };
-  return player;
-}
+// functions
 
 function createFirstGame() {
   var game = {
@@ -105,6 +71,25 @@ function createFirstGame() {
   };
 
   return game;
+}
+
+function setUserData(gameObject) {
+  var proxyGame = {...gameObject};
+  var userName = assignCase(domUserID.value);
+  proxyGame.players[0] = createPlayer(userName, domUserAvatar.value, 0);
+  updateReferenceView(proxyGame, "chooseGame");
+  gameObject = proxyGame;
+  return gameObject;
+}
+
+function createPlayer(label, icon, score) {
+  var player = {
+    name: label,
+    avatar: icon,
+    wins: score,
+    choice: ""
+  };
+  return player;
 }
 
 function generateClassicLogic() {
@@ -157,6 +142,18 @@ function setGameData(event, gameObject) {
   return gameObject;
 }
 
+function setPlayerChoice(event) {
+  if (event.target.classList.contains("single-fighter")) {
+    prepareFightData(event);
+    goToReveal();
+  }
+}
+function prepareFightData(event) {
+  game = assignHumanChoice(event, game);
+  game = compChoose(game);
+  updateReferenceView(game, "revealResult");
+}
+
 function assignHumanChoice(event, gameObject) {
   var proxyGame = {...gameObject};
   proxyGame.players[0].choice = event.target.id;
@@ -172,17 +169,32 @@ function compChoose(gameObject) {
   return gameObject;
 }
 
-function prepareFightData(event) {
-  game = assignHumanChoice(event, game);
-  game = compChoose(game);
-  updateReferenceView(game, "revealResult");
+function fightOrFlight(event) {
+  var cardIsClosed = event.target.classList.contains("result-unknown");
+  var cardIsOpen = event.target.classList.contains("result-card") || event.target.classList.contains("result-single-fighter");
+  if (cardIsClosed) {
+    game = processResult(game);
+    proceedToResult();
+  } else if (cardIsOpen) {
+    reloadFighterSelection();
+  }
 }
 
-function addToWins(playerObject) {
-  var proxyPlayer = {...playerObject};
-  proxyPlayer.wins++;
-  playerObject = proxyPlayer;
-  return playerObject;
+function processResult(gameObject) {
+  if (checkDraw(gameObject)) {
+    gameObject = processDraw(gameObject);
+  } else if (checkPlayerWin(gameObject)) {
+    gameObject = processWin(gameObject);
+  } else {
+    gameObject = processLoss(gameObject);
+  }
+  return gameObject;
+}
+
+function checkDraw(gameObject) {
+  var playerChoice = gameObject.players[0].choice;
+  var computerChoice = gameObject.players[1].choice;
+  return playerChoice === computerChoice;
 }
 
 function checkPlayerWin(gameObject) {
@@ -195,12 +207,6 @@ function checkPlayerWin(gameObject) {
     }
   }
   return winFound;
-}
-
-function checkDraw(gameObject) {
-  var playerChoice = gameObject.players[0].choice;
-  var computerChoice = gameObject.players[1].choice;
-  return playerChoice === computerChoice;
 }
 
 function processDraw(gameObject) {
@@ -229,17 +235,6 @@ function processLoss(gameObject) {
   return gameObject;
 }
 
-function processResult(gameObject) {
-  if (checkDraw(gameObject)) {
-    gameObject = processDraw(gameObject);
-  } else if (checkPlayerWin(gameObject)) {
-    gameObject = processWin(gameObject);
-  } else {
-    gameObject = processLoss(gameObject);
-  }
-  return gameObject;
-}
-
 // helper functions
 
 function updateReferenceView(gameObject, view) {
@@ -257,7 +252,8 @@ function changeSubHeading(gameObject) {
     declareDraw: "😞 It's a Draw! 😞",
     declareLoss: `${gameObject.players[1].avatar} Computer won this round! ${gameObject.players[1].avatar}`,
     declareWin: `${gameObject.players[0].avatar.toString()} You won this round! ${gameObject.players[0].avatar.toString()}`
-  }
+  };
+
   subHeading = referenceObject[gameObject.referenceView];
   return subHeading;
 }
