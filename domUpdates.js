@@ -102,7 +102,7 @@ function createSingleFighterHTML(fighter, gameObject) {
   for (var i = 0; i < gameObject.logic[fighter].length; i++) {
     htmlCode += 
     `
-    <img class="beat-fighter" src="assets/${gameObject.logic[fighter][i]}.png">
+    <img class="beat-fighter" src="assets/${gameObject.logic[fighter][i]}.png" alt="${gameObject.logic[fighter][i]} icon">
     `
   }
           
@@ -149,13 +149,13 @@ function createShowdownHTML(gameObject) {
   var htmlCode = 
   `
   <div class="result-card human-card">
-    <img class="result-single-fighter" src="assets/${gameObject.players[0].choice}.png">
+    <img class="result-single-fighter" src="assets/${gameObject.players[0].choice}.png" alt="${gameObject.players[0].choice} card">
   </div>
   <div class="result-unknown">
     Click to reveal
   </div>
   <div class="result-card comp-card hidden">
-    <img class="result-single-fighter" src="assets/${gameObject.players[1].choice}.png">
+    <img class="result-single-fighter" src="assets/${gameObject.players[1].choice}.png" alt="${gameObject.players[1].choice} card">
   </div>
   `;
   return htmlCode;
