@@ -200,6 +200,7 @@ function animateLoss(userCard, compCard) {
 }
 
 function reloadGameSelection() {
+  clearTimeout(timerID);
   goToView(gameChoiceView);
   hideDomElement(gameViewBtn);
   renderTextToElement(game.subHeading, domSubHeading);
