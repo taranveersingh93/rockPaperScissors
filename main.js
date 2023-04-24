@@ -1,21 +1,21 @@
 // query selectors
-var domPlayerIcon = document.querySelector(".player-icon");
-var domPlayerName = document.querySelector(".player-name");
-var domPlayerScore = document.querySelector(".human-score");
-var domComputerScore = document.querySelector(".computer-score");
-var domSubHeading = document.querySelector("h2");
+var playerIcon = document.querySelector(".player-icon");
+var playerName = document.querySelector(".player-name");
+var playerScore = document.querySelector(".human-score");
+var computerScore = document.querySelector(".computer-score");
+var subHeading = document.querySelector("h2");
 var userInputView = document.querySelector(".user-input-view");
-var domUserID = document.querySelector("#user-name");
-var domUserAvatar = document.querySelector("#avatar");
-var domSubmitBtn = document.querySelector(".form-submit-btn");
+var userID = document.querySelector("#user-name");
+var userAvatar = document.querySelector("#avatar");
+var submitBtn = document.querySelector(".form-submit-btn");
 var gameChoiceView = document.querySelector(".game-choice-view");
 var gameChoiceContainer = document.querySelector(".game-choice-container");
 var gameViewBtn = document.querySelector(".reload-game-view");
 var classicContainer = document.querySelector(".classic-container");
 var difficultContainer = document.querySelector(".difficult-container");
 var chooseFighterView = document.querySelector(".choose-fighter-view");
-var domFighters = document.querySelector(".all-fighters");
-var domResultFighters = document.querySelector(".both-fighters");
+var allFighters = document.querySelector(".all-fighters");
+var resultViewFighters = document.querySelector(".both-fighters");
 var resultView = document.querySelector(".result-view");
 
 // global variables
@@ -23,8 +23,8 @@ var game = createFirstGame();
 var timerID;
 
 // event listeners
-domUserID.addEventListener("keyup", allowSubmit);
-domSubmitBtn.addEventListener("click", function() {
+userID.addEventListener("keyup", allowSubmit);
+submitBtn.addEventListener("click", function() {
   game = setUserData(game);
   showGameChoice();
 });
@@ -35,21 +35,21 @@ gameChoiceContainer.addEventListener("mouseout", function(event) {
     collapseRules(event);
 });
 gameChoiceContainer.addEventListener("click", function(event) {
-  if (event.target.classList) {
+  if (event.target.closest(".game-card")) {
     game = setGameData(event, game);
     showGameBoard();
   }
 });
-domFighters.addEventListener("mouseover", function(event) {
+allFighters.addEventListener("mouseover", function(event) {
   showBeatCard(event);
 });
-domFighters.addEventListener("mouseout", function(event) {
+allFighters.addEventListener("mouseout", function(event) {
   hideBeatCard(event);
 });
-domFighters.addEventListener("click", function(event) {
+allFighters.addEventListener("click", function(event) {
   setPlayerChoice(event);
 });
-domResultFighters.addEventListener("click", function(event) {
+resultViewFighters.addEventListener("click", function(event) {
   fightOrFlight(event);
 });
 gameViewBtn.addEventListener("click", function() {
@@ -75,8 +75,8 @@ function createFirstGame() {
 
 function setUserData(gameObject) {
   var proxyGame = {...gameObject};
-  var userName = assignCase(domUserID.value);
-  proxyGame.players[0] = createPlayer(userName, domUserAvatar.value, 0);
+  var userName = assignCase(userID.value);
+  proxyGame.players[0] = createPlayer(userName, userAvatar.value, 0);
   updateReferenceView(proxyGame, "chooseGame");
   gameObject = proxyGame;
   return gameObject;

@@ -1,18 +1,18 @@
 function allowSubmit() {
-  if (domUserID.value) {
-    domSubmitBtn.disabled = false;
-    domSubmitBtn.classList.add("submit-btn-alt");
+  if (userID.value) {
+    submitBtn.disabled = false;
+    submitBtn.classList.add("submit-btn-alt");
   } else {
-    domSubmitBtn.disabled = true;
-    domSubmitBtn.classList.remove("submit-btn-alt");
+    submitBtn.disabled = true;
+    submitBtn.classList.remove("submit-btn-alt");
   }
 }
 
 function showGameChoice() {
-  renderPlayer(game.players[0], domPlayerIcon, domPlayerName);
+  renderPlayer(game.players[0], playerIcon, playerName);
   renderScore();
   goToView(gameChoiceView);
-  renderTextToElement(game.subHeading, domSubHeading);
+  renderTextToElement(game.subHeading, subHeading);
 }
 
 function showRules(event) {
@@ -61,14 +61,14 @@ function renderPlayer(playerObject, domIcon, domName) {
 }
 
 function renderScore() {
-  domPlayerScore.innerText = `Wins: ${game.players[0].wins}`;
-  domComputerScore.innerText = `Wins: ${game.players[1].wins}`;
+  playerScore.innerText = `Wins: ${game.players[0].wins}`;
+  computerScore.innerText = `Wins: ${game.players[1].wins}`;
 }
 
 function showGameBoard() {
   goToView(chooseFighterView);
   showDomElement(gameViewBtn);
-  renderTextToElement(game.subHeading, domSubHeading);
+  renderTextToElement(game.subHeading, subHeading);
   showFighters(game);
 }
 
@@ -78,7 +78,7 @@ function showFighters(gameObject) {
 }
 
 function renderFighters(gameObject) {
-  domFighters.innerHTML = createAllFighterHTML(gameObject);
+  allFighters.innerHTML = createAllFighterHTML(gameObject);
 }
 
 function createAllFighterHTML(gameObject) {
@@ -102,7 +102,7 @@ function createSingleFighterHTML(fighter, gameObject) {
   for (var i = 0; i < gameObject.logic[fighter].length; i++) {
     htmlCode += 
     `
-    <img class="beat-fighter" src="assets/${gameObject.logic[fighter][i]}.png">
+    <img class="beat-fighter" src="assets/${gameObject.logic[fighter][i]}.png" alt="${gameObject.logic[fighter][i]} icon">
     `
   }
           
@@ -137,42 +137,42 @@ function hideBeatCard(event) {
 function goToReveal() {
   goToView(resultView);
   showDomElement(gameViewBtn);
-  renderTextToElement(game.subHeading, domSubHeading);
+  renderTextToElement(game.subHeading, subHeading);
   renderResultPage();
 }
 
 function renderResultPage() {
-  domResultFighters.innerHTML = createShowdownHTML(game);
+  resultViewFighters.innerHTML = createShowdownHTML(game);
 }
 
 function createShowdownHTML(gameObject) {
   var htmlCode = 
   `
   <div class="result-card human-card">
-    <img class="result-single-fighter" src="assets/${gameObject.players[0].choice}.png">
+    <img class="result-single-fighter" src="assets/${gameObject.players[0].choice}.png" alt="${gameObject.players[0].choice} card">
   </div>
   <div class="result-unknown">
     Click to reveal
   </div>
   <div class="result-card comp-card hidden">
-    <img class="result-single-fighter" src="assets/${gameObject.players[1].choice}.png">
+    <img class="result-single-fighter" src="assets/${gameObject.players[1].choice}.png" alt="${gameObject.players[1].choice} card">
   </div>
   `;
   return htmlCode;
 }
 
 function proceedToResult() {
-  var domRevealCard = document.querySelector(".result-unknown");
-  var domComputerCard = document.querySelector(".comp-card");
-  hideDomElement(domRevealCard);
-  showDomElement(domComputerCard);
+  var revealCard = document.querySelector(".result-unknown");
+  var computerCard = document.querySelector(".comp-card");
+  hideDomElement(revealCard);
+  showDomElement(computerCard);
   setTimeout(announceResult, 300);
 }
 
 function announceResult() {
   var humanCard = document.querySelector(".human-card");
   var computerCard = document.querySelector(".comp-card");
-  renderTextToElement(game.subHeading, domSubHeading);
+  renderTextToElement(game.subHeading, subHeading);
   if (game.lastResult === "draw") {
     animateDraw(humanCard, computerCard);
   } else if (game.lastResult === "win") {
@@ -203,7 +203,7 @@ function reloadGameSelection() {
   clearTimeout(timerID);
   goToView(gameChoiceView);
   hideDomElement(gameViewBtn);
-  renderTextToElement(game.subHeading, domSubHeading);
+  renderTextToElement(game.subHeading, subHeading);
 }
 
 function reloadFighterSelection() {
