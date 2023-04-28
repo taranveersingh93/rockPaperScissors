@@ -93,8 +93,8 @@ function createSingleFighterHTML(fighter, gameObject) {
   var htmlCode = "";
   htmlCode += 
   `
-  <section class="fighter-card" id="${fighter}">
-    <img src="assets/${fighter}.png" alt="${fighter} icon" class="single-fighter">
+  <section class="fighter-card" id="${fighter}-card">
+    <img src="assets/${fighter}.png" alt="${fighter} icon" class="single-fighter" id="${fighter}">
       <div class="beat-card" id="${fighter}-beat-card">
         Beats
         <div class="beats">
@@ -119,6 +119,7 @@ function createSingleFighterHTML(fighter, gameObject) {
 function showBeatCard(event) {
   if (event.target.closest(".fighter-card")) {
     var parentID = event.target.closest(".fighter-card").id;
+    parentID = parentID.replace("-card","");
     var cardID = `${parentID}-beat-card`;
     var targetCard = document.querySelector("#"+cardID);
     targetCard.classList.add("show");
@@ -128,6 +129,7 @@ function showBeatCard(event) {
 function hideBeatCard(event) {
   if (event.target.closest(".fighter-card")) {
     var parentID = event.target.closest(".fighter-card").id;
+    parentID = parentID.replace("-card","");
     var cardID = `${parentID}-beat-card`;
     var targetCard = document.querySelector("#"+cardID);
     targetCard.classList.remove("show");
