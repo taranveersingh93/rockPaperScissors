@@ -144,6 +144,7 @@ function setGameData(event, gameObject) {
 
 function setPlayerChoice(event) {
   if (event.target.classList.contains("single-fighter")) {
+    console.log(event.target.id);
     prepareFightData(event);
     goToReveal();
   }
